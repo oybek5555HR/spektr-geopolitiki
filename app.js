@@ -513,6 +513,277 @@ ${b.significance}
         }
     };
 
+    // ==================== 5.5 ГЕОЭКОНОМИЧЕСКИЙ БАРОМЕТР: МИРОВЫЕ БИРЖИ ====================
+    let currentMarketCategory = "all";
+    let currentMarketSearch = "";
+
+    function renderMarketTicker() {
+        const tickerContainer = document.getElementById("tickerItemsContainer");
+        if (!tickerContainer || !GEOPOLITICS_DATA.markets || !GEOPOLITICS_DATA.markets.indicators) return;
+
+        const indicators = GEOPOLITICS_DATA.markets.indicators;
+        const displayList = [...indicators, ...indicators];
+
+        tickerContainer.innerHTML = displayList.map(ind => {
+            const isUp = ind.trend === "up";
+            const colorClass = isUp ? "text-emerald-400" : "text-rose-400";
+            const arrowIcon = isUp ? "fa-arrow-trend-up" : "fa-arrow-trend-down";
+            const bgClass = isUp ? "bg-emerald-500/10 border-emerald-500/30" : "bg-rose-500/10 border-rose-500/30";
+
+            return `
+                <a href="#markets-section" onclick="highlightMarketIndicator('${ind.id}')" class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md bg-slate-900 border border-slate-800 hover:border-amber-500/50 transition-all cursor-pointer">
+                    <span class="text-slate-300 font-bold">${ind.symbol}</span>
+                    <span class="text-white font-mono">${ind.price}</span>
+                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.2 rounded border ${colorClass} ${bgClass}">
+                        <i class="fa-solid ${arrowIcon}"></i> ${ind.change}
+                    </span>
+                </a>
+            `;
+        }).join("");
+    }
+
+    function renderMarketIndicators() {
+        const grid = document.getElementById("marketIndicatorsGrid");
+        if (!grid || !GEOPOLITICS_DATA.markets || !GEOPOLITICS_DATA.markets.indicators) return;
+
+        let list = [...GEOPOLITICS_DATA.markets.indicators];
+
+        if (currentMarketCategory !== "all") {
+            list = list.filter(i => i.category === currentMarketCategory);
+        }
+
+        if (currentMarketSearch.trim()) {
+            const q = currentMarketSearch.toLowerCase().trim();
+            list = list.filter(i => 
+                i.name.toLowerCase().includes(q) || 
+                i.symbol.toLowerCase().includes(q) || 
+                i.geopoliticalFactor.toLowerCase().includes(q) ||
+                i.geopoliticalAnalysis.toLowerCase().includes(q)
+            );
+        }
+
+        if (list.length === 0) {
+            grid.innerHTML = `
+                <div class="col-span-full text-center py-12 glass-panel rounded-2xl border-dashed border-slate-700">
+                    <i class="fa-solid fa-chart-line text-slate-600 text-3xl mb-3"></i>
+                    <p class="text-sm text-slate-400">Показатели по данному запросу не найдены.</p>
+                </div>
+            `;
+            return;
+        }
+
+        grid.innerHTML = list.map(item => {
+            const isUp = item.trend === "up";
+            const changeColor = isUp ? "text-emerald-400" : "text-rose-400";
+            const changeBg = isUp ? "bg-emerald-500/15 border-emerald-500/30" : "bg-rose-500/15 border-rose-500/30";
+            const arrow = isUp ? "fa-arrow-trend-up" : "fa-arrow-trend-down";
+
+            return `
+                <div id="market-card-${item.id}" class="market-card glass-panel p-5 rounded-2xl border-slate-800 bg-slate-900/60 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 text-slate-800/15 text-8xl font-black pointer-events-none select-none font-mono">
+                        ${item.symbol.split('/')[0].split(' ')[0]}
+                    </div>
+
+                    <div>
+                        <!-- Header with Category and Status Badge -->
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/60">
+                                ${item.categoryName}
+                            </span>
+                            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                                ${item.statusBadge}
+                            </span>
+                        </div>
+
+                        <!-- Name and Current Quote -->
+                        <div class="flex items-baseline justify-between gap-2 mb-1">
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                ${item.name}
+                                <span class="text-xs text-slate-500 font-mono font-normal">${item.symbol}</span>
+                            </h3>
+                            <div class="text-right">
+                                <span class="text-lg font-bold font-mono text-white">${item.price}</span>
+                                <span class="text-[10px] text-slate-400 block">${item.unit}</span>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Change Badge & 52-Week Range -->
+                        <div class="flex items-center justify-between text-xs mb-4">
+                            <span class="inline-flex items-center gap-1 font-mono font-bold px-2 py-0.5 rounded border ${changeColor} ${changeBg}">
+                                <i class="fa-solid ${arrow}"></i> ${item.change}
+                            </span>
+                            <span class="text-[10px] text-slate-500 font-mono">
+                                52 нед: <span class="text-slate-400">${item.low52}</span> — <span class="text-slate-400">${item.high52}</span>
+                            </span>
+                        </div>
+
+                        <!-- Geopolitical Trigger Factor -->
+                        <div class="p-2.5 rounded-xl bg-slate-950/70 border border-slate-800/80 mb-3">
+                            <div class="text-[10px] uppercase tracking-wider text-amber-400 font-bold flex items-center gap-1.5 mb-1">
+                                <i class="fa-solid fa-crosshairs text-[9px]"></i> Геополитический триггер:
+                            </div>
+                            <div class="text-xs text-slate-200 font-semibold">${item.geopoliticalFactor}</div>
+                        </div>
+
+                        <!-- Strategic Analysis -->
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            ${item.geopoliticalAnalysis}
+                        </p>
+                    </div>
+
+                    <!-- Action Footer -->
+                    <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px]">
+                        <button onclick="discussMarketInChat('${item.name} (${item.symbol})', '${item.price}')" class="text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1.5 transition-colors">
+                            <i class="fa-solid fa-comments"></i> Обсудить в чате
+                        </button>
+                        <span class="text-[10px] text-slate-500 font-mono flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 market-pulse-dot"></span> Актуально
+                        </span>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+
+    function renderMarketThematicBriefs() {
+        const container = document.getElementById("marketThematicBriefs");
+        if (!container || !GEOPOLITICS_DATA.markets || !GEOPOLITICS_DATA.markets.thematicBriefs) return;
+
+        container.innerHTML = GEOPOLITICS_DATA.markets.thematicBriefs.map(brief => `
+            <div class="glass-panel p-5 rounded-2xl border-slate-800 bg-slate-950/60 flex flex-col justify-between">
+                <div>
+                    <div class="w-9 h-9 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-${brief.icon} ${brief.color} text-sm"></i>
+                    </div>
+                    <h4 class="text-sm font-bold text-white mb-2 leading-snug">${brief.title}</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">${brief.text}</p>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    window.highlightMarketIndicator = function(id) {
+        playSound("click");
+        const card = document.getElementById(`market-card-${id}`);
+        if (card) {
+            card.scrollIntoView({ behavior: "smooth", block: "center" });
+            card.classList.add("ring-2", "ring-amber-400", "scale-[1.02]");
+            setTimeout(() => {
+                card.classList.remove("ring-2", "ring-amber-400", "scale-[1.02]");
+            }, 2500);
+        }
+    };
+
+    window.discussMarketInChat = function(name, price) {
+        playSound("click");
+        switchChatChannel("energy");
+        const chatSec = document.getElementById("chat-section");
+        if (chatSec) chatSec.scrollIntoView({ behavior: "smooth" });
+        const input = document.getElementById("chatMessageInput");
+        if (input) {
+            input.value = `[Рыночный сигнал: ${name} @ ${price}] Коллеги, как оцениваете геополитические последствия изменения цены? `;
+            input.focus();
+        }
+    };
+
+    // Category Filter Listeners
+    document.querySelectorAll(".market-cat-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            playSound("click");
+            currentMarketCategory = btn.dataset.cat;
+            document.querySelectorAll(".market-cat-btn").forEach(b => {
+                const active = b.dataset.cat === currentMarketCategory;
+                b.className = `market-cat-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all ${active ? 'bg-amber-500 text-slate-950 shadow-md' : 'bg-slate-900 text-slate-300 hover:text-white border border-slate-700'}`;
+            });
+            renderMarketIndicators();
+        });
+    });
+
+    const marketSearchInput = document.getElementById("marketSearchInput");
+    if (marketSearchInput) {
+        marketSearchInput.addEventListener("input", (e) => {
+            currentMarketSearch = e.target.value;
+            renderMarketIndicators();
+        });
+    }
+
+    window.exportMarketSummaryPdf = function() {
+        playSound("click");
+        const markets = GEOPOLITICS_DATA.markets;
+        if (!markets) return;
+
+        const printable = document.createElement("div");
+        printable.style.padding = "30px";
+        printable.style.background = "#ffffff";
+        printable.style.color = "#0f172a";
+        printable.style.fontFamily = "Arial, sans-serif";
+
+        printable.innerHTML = `
+            <div style="border-bottom: 2px solid #b45309; padding-bottom: 12px; margin-bottom: 20px;">
+                <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #b45309; font-weight: bold;">
+                    Спектр геополитики • Аналитическое бюро
+                </div>
+                <h1 style="font-size: 22px; color: #0a0f1d; margin: 6px 0 4px 0;">СВОДКА МИРОВЫХ БИРЖЕВЫХ ПОКАЗАТЕЛЕЙ И ГЕОЭКОНОМИКИ</h1>
+                <div style="font-size: 11px; color: #64748b;">Дата формирования: ${new Date().toLocaleDateString('ru-RU')} • Геополитический стресс-индекс сырья: ${markets.geopoliticalStressIndex.score}/100 (${markets.geopoliticalStressIndex.level})</div>
+            </div>
+
+            <h3 style="font-size: 14px; text-transform: uppercase; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 12px;">1. Ключевые биржевые индикаторы и сырьевые ресурсы</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 24px;">
+                <thead>
+                    <tr style="background: #f1f5f9; text-align: left;">
+                        <th style="padding: 8px; border: 1px solid #cbd5e1;">Индикатор</th>
+                        <th style="padding: 8px; border: 1px solid #cbd5e1;">Котировка</th>
+                        <th style="padding: 8px; border: 1px solid #cbd5e1;">Изм.</th>
+                        <th style="padding: 8px; border: 1px solid #cbd5e1;">Геополитический триггер</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${markets.indicators.map(ind => `
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #e2e8f0; font-weight: bold;">${ind.name} (${ind.symbol})</td>
+                            <td style="padding: 8px; border: 1px solid #e2e8f0; font-family: monospace;">${ind.price} ${ind.unit}</td>
+                            <td style="padding: 8px; border: 1px solid #e2e8f0; color: ${ind.trend === 'up' ? '#166534' : '#991b1b'}; font-weight: bold;">${ind.change}</td>
+                            <td style="padding: 8px; border: 1px solid #e2e8f0;">${ind.geopoliticalFactor}</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+
+            <h3 style="font-size: 14px; text-transform: uppercase; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 12px;">2. Стратегические аналитические выводы</h3>
+            ${markets.thematicBriefs.map(b => `
+                <div style="margin-bottom: 14px; padding: 10px; background: #f8fafc; border-left: 3px solid #f59e0b;">
+                    <div style="font-weight: bold; font-size: 12px; color: #0f172a; margin-bottom: 4px;">${b.title}</div>
+                    <div style="font-size: 11px; color: #334155; line-height: 1.5;">${b.text}</div>
+                </div>
+            `).join('')}
+
+            <div style="margin-top: 30px; border-top: 1px solid #cbd5e1; padding-top: 10px; font-size: 10px; color: #94a3b8; text-align: center;">
+                Аналитический бюллетень портала «Спектр геополитики» • Подготовлено для исследователей и ситуационных центров
+            </div>
+        `;
+
+        printable.style.position = "fixed";
+        printable.style.left = "-9999px";
+        printable.style.top = "0";
+        printable.style.width = "794px";
+        document.body.appendChild(printable);
+
+        const opt = {
+            margin: [10, 10, 10, 10],
+            filename: `Сводка_мировых_бирж_${new Date().toISOString().slice(0, 10)}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(printable).save().then(() => {
+            document.body.removeChild(printable);
+        }).catch(err => {
+            console.error("PDF generation error:", err);
+            if (printable.parentNode) document.body.removeChild(printable);
+        });
+    };
+
     // ==================== 6. ИНТЕРАКТИВНАЯ КАРТА И ДАШБОРД АЛЬЯНСОВ ====================
     const allianceSelectorBar = document.getElementById("allianceSelectorBar");
     const allianceDetailCard = document.getElementById("allianceDetailCard");
@@ -1812,6 +2083,9 @@ ${b.significance}
     initFilters();
     renderAuthors();
     renderForums();
+    renderMarketTicker();
+    renderMarketIndicators();
+    renderMarketThematicBriefs();
     initAlliances();
     renderRegions();
     initChokePoints();

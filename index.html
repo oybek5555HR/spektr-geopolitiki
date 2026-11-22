@@ -91,6 +91,10 @@
                     <i class="fa-solid fa-globe text-red-400"></i> Форумы
                     <span class="px-1.5 py-0.2 text-[9px] bg-red-500/20 border border-red-500/50 text-red-300 rounded font-bold">LIVE</span>
                 </a>
+                <a href="#markets-section" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold">
+                    <i class="fa-solid fa-arrow-trend-up text-emerald-400"></i> Биржи
+                    <span class="px-1.5 py-0.2 text-[9px] bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 rounded font-bold">СВОДКА</span>
+                </a>
                 <a href="#alliances-section" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold">
                     <i class="fa-solid fa-shield-halved text-amber-500"></i> Альянсы
                 </a>
@@ -132,6 +136,26 @@
             </div>
         </div>
     </header>
+
+    <!-- World Market Indicators Ticker Bar -->
+    <div id="marketTickerBar" class="bg-slate-950/95 border-b border-amber-500/20 py-2 px-4 overflow-hidden relative z-40 text-xs font-mono select-none">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2 flex-shrink-0 text-amber-400 font-bold uppercase tracking-wider text-[11px]">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <i class="fa-solid fa-arrow-trend-up"></i>
+                <span class="hidden sm:inline">Мировые биржи:</span>
+            </div>
+            <div class="overflow-hidden relative w-full mask-gradient-x">
+                <div class="flex items-center gap-6 whitespace-nowrap animate-ticker" id="tickerItemsContainer">
+                    <!-- Populated dynamically via JavaScript -->
+                </div>
+            </div>
+            <a href="#markets-section" class="flex-shrink-0 px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-sans font-semibold transition-all flex items-center gap-1">
+                <span>Сводка рынков</span>
+                <i class="fa-solid fa-chevron-right text-[8px]"></i>
+            </a>
+        </div>
+    </div>
 
     <!-- Hero Section with Radar Atmosphere & Live Metrics -->
     <section class="relative pt-10 pb-14 overflow-hidden radar-grid border-b border-amber-500/15">
@@ -263,7 +287,84 @@
         </div>
     </section>
 
-    <!-- SECTION 2: ИНТЕРАКТИВНАЯ КАРТА И ДАШБОРД МИРОВЫХ АЛЬЯНСОВ -->
+    <!-- SECTION: ГЕОЭКОНОМИЧЕСКИЙ БАРОМЕТР: СВОДКА МИРОВЫХ БИРЖЕВЫХ ПОКАЗАТЕЛЕЙ -->
+    <section id="markets-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-slate-800">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+            <div>
+                <div class="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-emerald-400 font-bold mb-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Геоэкономический барометр • Мировые биржи
+                </div>
+                <h2 class="text-3xl font-bold font-serif-title text-white">Сводка мировых биржевых показателей</h2>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-2xl">
+                    Котировки нефти, газа, золота, урана и ведущих фондовых индексов (IMOEX, S&P 500, Shanghai) в контексте санкционных войн, морских Choke Points и процессов дедолларизации.
+                </p>
+            </div>
+
+            <!-- Geopolitical Stress Index Widget & Export -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <div class="glass-panel p-4 rounded-xl border-amber-500/30 flex items-center gap-4 bg-slate-900/80 shadow-lg min-w-[280px]">
+                    <div class="relative w-14 h-14 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                            <path class="text-slate-800" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="text-amber-500" stroke-width="3.5" stroke-dasharray="78, 100" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <span class="absolute font-mono font-bold text-amber-400 text-sm">78%</span>
+                    </div>
+                    <div>
+                        <div class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Стресс-индекс сырья:</div>
+                        <div class="text-xs font-bold text-amber-300">Высокий геополитический риск</div>
+                        <div class="text-[10px] text-slate-500 mt-0.5">Премия за риск в нефти: $8–12/барр.</div>
+                    </div>
+                </div>
+
+                <button onclick="exportMarketSummaryPdf()" class="px-4 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold text-xs transition-all shadow-lg flex items-center justify-center gap-2 group">
+                    <i class="fa-solid fa-file-pdf text-sm text-slate-950 group-hover:scale-110 transition-transform"></i>
+                    <span>Экспорт в PDF</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Controls & Search -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div class="flex flex-wrap gap-2" id="marketCategoryFilter">
+                <button data-cat="all" class="market-cat-btn active px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 text-slate-950 shadow-md">
+                    Все показатели (15)
+                </button>
+                <button data-cat="energy" class="market-cat-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 hover:text-white border border-slate-700">
+                    <i class="fa-solid fa-fire text-amber-400 mr-1"></i> Энергетика
+                </button>
+                <button data-cat="metals" class="market-cat-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 hover:text-white border border-slate-700">
+                    <i class="fa-solid fa-coins text-yellow-400 mr-1"></i> Драгметаллы & Минералы
+                </button>
+                <button data-cat="indices" class="market-cat-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 hover:text-white border border-slate-700">
+                    <i class="fa-solid fa-chart-line text-blue-400 mr-1"></i> Фондовые индексы
+                </button>
+                <button data-cat="currencies" class="market-cat-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 hover:text-white border border-slate-700">
+                    <i class="fa-solid fa-dollar-sign text-emerald-400 mr-1"></i> Валюты & Доходности
+                </button>
+            </div>
+
+            <!-- Indicator Search -->
+            <div class="relative w-full sm:w-64">
+                <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-500 text-xs"></i>
+                <input type="text" id="marketSearchInput" placeholder="Поиск (Brent, Золото, IMOEX...)" 
+                       class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400">
+            </div>
+        </div>
+
+        <!-- Indicators Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10" id="marketIndicatorsGrid">
+            <!-- Populated via JavaScript -->
+        </div>
+
+        <!-- Strategic Thematic Briefs -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-6 border-t border-slate-800/80" id="marketThematicBriefs">
+            <!-- Populated via JavaScript -->
+        </div>
+    </section>
+
+    <!-- SECTION 3: ИНТЕРАКТИВНАЯ КАРТА И ДАШБОРД МИРОВЫХ АЛЬЯНСОВ -->
     <section id="alliances-section" class="border-b border-slate-800 bg-slate-950/60 py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-10">
