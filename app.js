@@ -2217,52 +2217,65 @@ ${b.significance}
     // ==================== 19. ПОИСК И СОРТИРОВКА ====================
     function handleSearch(val) {
         searchQuery = val;
-        mainSearchInput.value = val;
-        headerSearchInput.value = val;
-        if (val.trim() !== "") {
-            clearSearchBtn.classList.remove("hidden");
-        } else {
-            clearSearchBtn.classList.add("hidden");
+        if (mainSearchInput) mainSearchInput.value = val;
+        if (headerSearchInput) headerSearchInput.value = val;
+        if (clearSearchBtn) {
+            if (val.trim() !== "") {
+                clearSearchBtn.classList.remove("hidden");
+            } else {
+                clearSearchBtn.classList.add("hidden");
+            }
         }
         renderAuthors();
     }
 
-    mainSearchInput.addEventListener("input", (e) => handleSearch(e.target.value));
-    headerSearchInput.addEventListener("input", (e) => {
-        handleSearch(e.target.value);
-        if (window.scrollY < 400) {
-            document.getElementById("library").scrollIntoView({ behavior: "smooth" });
-        }
-    });
+    if (mainSearchInput) {
+        mainSearchInput.addEventListener("input", (e) => handleSearch(e.target.value));
+    }
+    if (headerSearchInput) {
+        headerSearchInput.addEventListener("input", (e) => {
+            handleSearch(e.target.value);
+            if (window.scrollY < 400) {
+                const libEl = document.getElementById("library");
+                if (libEl) libEl.scrollIntoView({ behavior: "smooth" });
+            }
+        });
+    }
 
-    clearSearchBtn.addEventListener("click", () => {
-        playSound("click");
-        handleSearch("");
-        mainSearchInput.focus();
-    });
+    if (clearSearchBtn) {
+        clearSearchBtn.addEventListener("click", () => {
+            playSound("click");
+            handleSearch("");
+            if (mainSearchInput) mainSearchInput.focus();
+        });
+    }
 
-    resetAllFiltersBtn.addEventListener("click", () => {
-        playSound("click");
-        currentEra = "all";
-        currentSchool = "all";
-        searchQuery = "";
-        onlyFavorites = false;
-        if (favoritesFilterBtn) {
-            favoritesFilterBtn.classList.remove("bg-amber-500", "text-slate-950", "border-amber-400");
-            favoritesFilterBtn.classList.add("bg-slate-900", "text-slate-300");
-        }
-        mainSearchInput.value = "";
-        headerSearchInput.value = "";
-        clearSearchBtn.classList.add("hidden");
-        updateFilterUI();
-        renderAuthors();
-    });
+    if (resetAllFiltersBtn) {
+        resetAllFiltersBtn.addEventListener("click", () => {
+            playSound("click");
+            currentEra = "all";
+            currentSchool = "all";
+            searchQuery = "";
+            onlyFavorites = false;
+            if (favoritesFilterBtn) {
+                favoritesFilterBtn.classList.remove("bg-amber-500", "text-slate-950", "border-amber-400");
+                favoritesFilterBtn.classList.add("bg-slate-900", "text-slate-300");
+            }
+            if (mainSearchInput) mainSearchInput.value = "";
+            if (headerSearchInput) headerSearchInput.value = "";
+            if (clearSearchBtn) clearSearchBtn.classList.add("hidden");
+            updateFilterUI();
+            renderAuthors();
+        });
+    }
 
-    sortSelect.addEventListener("change", (e) => {
-        playSound("click");
-        currentSort = e.target.value;
-        renderAuthors();
-    });
+    if (sortSelect) {
+        sortSelect.addEventListener("change", (e) => {
+            playSound("click");
+            currentSort = e.target.value;
+            renderAuthors();
+        });
+    }
 
     glossarySearchInput.addEventListener("input", (e) => {
         renderGlossary(e.target.value);

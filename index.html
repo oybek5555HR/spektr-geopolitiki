@@ -87,22 +87,22 @@
             </a>
 
             <nav class="hidden xl:flex items-center space-x-5 text-sm font-medium text-slate-300">
-                <a href="#forums-section" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold">
-                    <i class="fa-solid fa-globe text-red-400"></i> Форумы
-                    <span class="px-1.5 py-0.2 text-[9px] bg-red-500/20 border border-red-500/50 text-red-300 rounded font-bold">LIVE</span>
+                <a href="#library" class="px-3.5 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/50 text-amber-300 hover:text-white hover:bg-amber-500/30 transition-all flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold shadow-sm shadow-amber-500/10">
+                    <i class="fa-solid fa-book-open text-amber-400"></i> Библиотека (42 книги)
                 </a>
                 <a href="#markets-section" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold">
                     <i class="fa-solid fa-arrow-trend-up text-emerald-400"></i> Биржи
                     <span class="px-1.5 py-0.2 text-[9px] bg-emerald-500/20 border border-emerald-500/50 text-emerald-300 rounded font-bold">СВОДКА</span>
+                </a>
+                <a href="#forums-section" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold">
+                    <i class="fa-solid fa-globe text-red-400"></i> Форумы
+                    <span class="px-1.5 py-0.2 text-[9px] bg-red-500/20 border border-red-500/50 text-red-300 rounded font-bold">LIVE</span>
                 </a>
                 <a href="#alliances-section" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold">
                     <i class="fa-solid fa-shield-halved text-amber-500"></i> Альянсы
                 </a>
                 <a href="#regions-section" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold">
                     <i class="fa-solid fa-chart-pie text-emerald-400"></i> Регионы
-                </a>
-                <a href="#library" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold">
-                    <i class="fa-solid fa-book-atlas text-blue-400"></i> Библиотека
                 </a>
                 <a href="#chat-section" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold relative">
                     <i class="fa-solid fa-comments text-amber-400"></i> Чат
@@ -112,6 +112,11 @@
 
             <div class="flex items-center space-x-2 sm:space-x-3">
                 <!-- Sound Toggle -->
+                <div class="hidden lg:flex items-center relative w-52 xl:w-64 mr-2">
+                    <input type="text" id="headerSearchInput" placeholder="Поиск среди 42 книг..." 
+                           class="w-full bg-slate-900/90 border border-amber-500/30 rounded-xl px-3 py-1.5 pl-8 text-xs text-slate-100 placeholder-slate-400 focus:outline-none focus:border-amber-400 transition-all">
+                    <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-amber-400/70 text-xs"></i>
+                </div>
                 <button id="soundToggleBtn" title="Звуковые эффекты терминала" class="w-9 h-9 rounded-lg bg-slate-900 border border-slate-700/80 text-slate-300 hover:text-amber-400 hover:border-amber-500 flex items-center justify-center text-xs transition-colors">
                     <i class="fa-solid fa-volume-high"></i>
                 </button>
@@ -212,17 +217,20 @@
 
             <!-- Quick Action Pills -->
             <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
+                <a href="#library" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-extrabold text-xs uppercase tracking-wider transition-all flex items-center gap-2 shadow-lg shadow-amber-500/25">
+                    <i class="fa-solid fa-book-open"></i> Книжная библиотека (42 труда)
+                </a>
+                <a href="#markets-section" class="px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/50 hover:bg-emerald-500/30 text-emerald-300 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-trend-up text-emerald-400"></i> Биржевой барометр
+                </a>
                 <a href="#forums-section" class="px-4 py-2 rounded-xl bg-red-500/20 border border-red-500/50 hover:bg-red-500/30 text-red-300 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-red-400 animate-ping"></span> Радар форумов (LIVE)
+                    <span class="w-2 h-2 rounded-full bg-red-400 animate-ping"></span> Форумы (LIVE)
                 </a>
                 <a href="#alliances-section" class="px-4 py-2 rounded-xl bg-amber-500/20 border border-amber-500/50 hover:bg-amber-500/30 text-amber-300 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-shield-halved text-amber-400"></i> Карта альянсов (БРИКС / НАТО)
+                    <i class="fa-solid fa-shield-halved text-amber-400"></i> Альянсы
                 </a>
-                <a href="#regions-section" class="px-4 py-2 rounded-xl bg-blue-500/20 border border-blue-500/50 hover:bg-blue-500/30 text-blue-300 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-compass text-blue-400"></i> Аналитика регионов
-                </a>
-                <a href="#library" class="px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/50 hover:bg-emerald-500/30 text-emerald-300 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2">
-                    <i class="fa-solid fa-file-pdf text-emerald-400"></i> Книги & Экспорт PDF
+                <a href="#chat-section" class="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 hover:border-amber-400 text-slate-200 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-comments text-amber-400"></i> Чат
                 </a>
             </div>
 
@@ -249,6 +257,95 @@
 
         </div>
     </section>
+
+    <!-- Main Content Area: Library with Book Download and PDF Export -->
+    <main id="library" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-slate-800 flex-grow">
+        
+        <!-- Filter Bar Header -->
+        <div class="mb-10">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-slate-800">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-widest text-amber-500 mb-1 block">Каталог классиков, скачивание и печать</span>
+                    <h2 class="text-3xl font-bold font-serif-title text-white">Фундаментальная библиотека</h2>
+                    <p class="text-xs text-slate-400 mt-1">Каждый труд снабжен аналитическим конспектом с возможностью мгновенного экспорта в PDF или текстовый формат.</p>
+                </div>
+                
+                <!-- Live Search Box -->
+                <div class="w-full lg:w-96 relative">
+                    <input type="text" id="mainSearchInput" placeholder="Поиск автора, названия книги, тезиса..." 
+                           class="w-full bg-slate-900/90 border border-amber-500/30 rounded-xl px-4 py-2.5 pl-11 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-amber-400/70 text-sm"></i>
+                    <button id="clearSearchBtn" class="hidden absolute right-3 top-2.5 text-slate-400 hover:text-white text-xs bg-slate-800 px-2 py-1 rounded">
+                        Сброс
+                    </button>
+                </div>
+            </div>
+
+            <!-- Era Tabs Filter -->
+            <div class="mt-6 flex flex-wrap gap-2" id="eraFilterContainer">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <!-- School Pills Filter -->
+            <div class="mt-4 flex flex-wrap items-center gap-2" id="schoolFilterContainer">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+
+        <!-- Dynamic Results Counter & View Mode Switcher -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-slate-400 mb-6 pb-4 border-b border-slate-800/80">
+            <!-- View Mode Switcher (Books Showcase vs Authors Grid) -->
+            <div class="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-slate-800 self-start sm:self-auto">
+                <button id="viewBooksBtn" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-500 text-slate-950 shadow-md flex items-center gap-1.5">
+                    <i class="fa-solid fa-book-bookmark"></i>
+                    <span>Все книги (42 труда)</span>
+                </button>
+                <button id="viewAuthorsBtn" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
+                    <i class="fa-solid fa-users"></i>
+                    <span>По авторам (20)</span>
+                </button>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div>
+                    Показано: <span id="booksCount" class="font-bold text-amber-400">42</span> книг • <span id="authorsCount" class="font-bold text-slate-300">20</span> мыслителей
+                    <span id="activeFilterBadge" class="hidden ml-2 px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold"></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="hidden md:inline">Сортировка:</span>
+                    <select id="sortSelect" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-slate-300 text-xs focus:outline-none focus:border-amber-500">
+                        <option value="chronological">По эпохам (от Ратцеля к современникам)</option>
+                        <option value="popular">По популярности (просмотрам)</option>
+                        <option value="downloads">По числу скачиваний</option>
+                        <option value="alpha">По названию книги (А-Я)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. Books Showcase Grid (Prominently visible books with 1-click downloads) -->
+        <div id="booksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <!-- Injected via JavaScript -->
+        </div>
+
+        <!-- 2. Authors Grid (Alternate view) -->
+        <div id="authorsGrid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <!-- Injected via JavaScript -->
+        </div>
+
+        <!-- No Results Fallback -->
+        <div id="noResults" class="hidden py-16 text-center">
+            <div class="w-16 h-16 rounded-full bg-slate-800 text-slate-500 flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-compass"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-200 mb-1">Ничего не найдено</h3>
+            <p class="text-sm text-slate-400 max-w-md mx-auto">Попробуйте изменить поисковый запрос или сбросить фильтры эпохи и школы.</p>
+            <button id="resetAllFiltersBtn" class="mt-4 px-4 py-2 bg-amber-500 text-slate-950 font-semibold text-xs rounded-lg uppercase tracking-wider hover:brightness-110">
+                Показать всех авторов
+            </button>
+        </div>
+
+    </main>
 
     <!-- SECTION 1: РАДАР ГЕОПОЛИТИЧЕСКИХ ФОРУМОВ И САММИТОВ (ТЕКУЩИЕ И БЛИЖАЙШИЕ) -->
     <section id="forums-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-slate-800">
@@ -408,94 +505,7 @@
         </div>
     </section>
 
-    <!-- Main Content Area: Library with Book Download and PDF Export -->
-    <main id="library" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-slate-800 flex-grow">
-        
-        <!-- Filter Bar Header -->
-        <div class="mb-10">
-            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-slate-800">
-                <div>
-                    <span class="text-xs font-semibold uppercase tracking-widest text-amber-500 mb-1 block">Каталог классиков, скачивание и печать</span>
-                    <h2 class="text-3xl font-bold font-serif-title text-white">Фундаментальная библиотека</h2>
-                    <p class="text-xs text-slate-400 mt-1">Каждый труд снабжен аналитическим конспектом с возможностью мгновенного экспорта в PDF или текстовый формат.</p>
-                </div>
-                
-                <!-- Live Search Box -->
-                <div class="w-full lg:w-96 relative">
-                    <input type="text" id="mainSearchInput" placeholder="Поиск автора, названия книги, тезиса..." 
-                           class="w-full bg-slate-900/90 border border-amber-500/30 rounded-xl px-4 py-2.5 pl-11 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-amber-400/70 text-sm"></i>
-                    <button id="clearSearchBtn" class="hidden absolute right-3 top-2.5 text-slate-400 hover:text-white text-xs bg-slate-800 px-2 py-1 rounded">
-                        Сброс
-                    </button>
-                </div>
-            </div>
-
-            <!-- Era Tabs Filter -->
-            <div class="mt-6 flex flex-wrap gap-2" id="eraFilterContainer">
-                <!-- Injected via JavaScript -->
-            </div>
-
-            <!-- School Pills Filter -->
-            <div class="mt-4 flex flex-wrap items-center gap-2" id="schoolFilterContainer">
-                <!-- Injected via JavaScript -->
-            </div>
-        </div>
-
-        <!-- Dynamic Results Counter & View Mode Switcher -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-slate-400 mb-6 pb-4 border-b border-slate-800/80">
-            <!-- View Mode Switcher (Books Showcase vs Authors Grid) -->
-            <div class="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-slate-800 self-start sm:self-auto">
-                <button id="viewBooksBtn" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-500 text-slate-950 shadow-md flex items-center gap-1.5">
-                    <i class="fa-solid fa-book-bookmark"></i>
-                    <span>Все книги (42 труда)</span>
-                </button>
-                <button id="viewAuthorsBtn" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
-                    <i class="fa-solid fa-users"></i>
-                    <span>По авторам (20)</span>
-                </button>
-            </div>
-
-            <div class="flex items-center gap-4">
-                <div>
-                    Показано: <span id="booksCount" class="font-bold text-amber-400">42</span> книг • <span id="authorsCount" class="font-bold text-slate-300">20</span> мыслителей
-                    <span id="activeFilterBadge" class="hidden ml-2 px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold"></span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="hidden md:inline">Сортировка:</span>
-                    <select id="sortSelect" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-slate-300 text-xs focus:outline-none focus:border-amber-500">
-                        <option value="chronological">По эпохам (от Ратцеля к современникам)</option>
-                        <option value="popular">По популярности (просмотрам)</option>
-                        <option value="downloads">По числу скачиваний</option>
-                        <option value="alpha">По названию книги (А-Я)</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- 1. Books Showcase Grid (Prominently visible books with 1-click downloads) -->
-        <div id="booksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            <!-- Injected via JavaScript -->
-        </div>
-
-        <!-- 2. Authors Grid (Alternate view) -->
-        <div id="authorsGrid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            <!-- Injected via JavaScript -->
-        </div>
-
-        <!-- No Results Fallback -->
-        <div id="noResults" class="hidden py-16 text-center">
-            <div class="w-16 h-16 rounded-full bg-slate-800 text-slate-500 flex items-center justify-center mx-auto mb-4 text-2xl">
-                <i class="fa-solid fa-compass"></i>
-            </div>
-            <h3 class="text-lg font-bold text-slate-200 mb-1">Ничего не найдено</h3>
-            <p class="text-sm text-slate-400 max-w-md mx-auto">Попробуйте изменить поисковый запрос или сбросить фильтры эпохи и школы.</p>
-            <button id="resetAllFiltersBtn" class="mt-4 px-4 py-2 bg-amber-500 text-slate-950 font-semibold text-xs rounded-lg uppercase tracking-wider hover:brightness-110">
-                Показать всех авторов
-            </button>
-        </div>
-
-    </main>
+    
 
     <!-- Section 5: Interactive Geopolitical Concepts & Choke Points -->
     <section id="concepts" class="border-b border-amber-500/20 bg-slate-950/60 py-16 relative">
@@ -799,7 +809,7 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="data.js"></script>
-    <script src="app.js"></script>
+    <script src="data.js?v=20261122_4"></script>
+    <script src="app.js?v=20261122_4"></script>
 </body>
 </html>
