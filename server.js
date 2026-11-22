@@ -6,6 +6,7 @@ const PORT = 3000;
 const DATA_DIR = path.join(__dirname, 'data_store');
 const STATS_FILE = path.join(DATA_DIR, 'stats.json');
 const CHAT_FILE = path.join(DATA_DIR, 'chat.json');
+const ARTICLES_FILE = path.join(DATA_DIR, 'articles.json');
 
 // Ensure data dir exists
 if (!fs.existsSync(DATA_DIR)) {
@@ -139,6 +140,7 @@ function saveJson(filePath, data) {
 
 let statsData = loadJson(STATS_FILE, DEFAULT_STATS);
 let chatData = loadJson(CHAT_FILE, DEFAULT_CHAT);
+let articlesData = loadJson(ARTICLES_FILE, []);
 
 const MIME_TYPES = {
     '.html': 'text/html; charset=utf-8',
@@ -353,6 +355,144 @@ const server = http.createServer((req, res) => {
             }
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: true, likes: target ? target.likes : 0 }));
+        });
+        return;
+    }
+
+    // ==========================================
+    // Academic Articles (Научный вестник соискателей и магистрантов)
+    // ==========================================
+    if (pathname === '/api/articles' && req.method === 'GET') {
+        const token = parsedUrl.searchParams.get('token') || req.headers['x-moderator-token'];
+        const isModerator = (token === 'geopolitics2026' || token === 'admin2026');
+        const requestedStatus = parsedUrl.searchParams.get('status');
+        const topic = parsedUrl.searchParams.get('topic');
+        const search = (parsedUrl.searchParams.get('search') || '').toLowerCase().trim();
+
+        // Always reload from file in case of updates
+        articlesData = loadJson(ARTICLES_FILE, []);
+
+        let filtered = articlesData;
+
+        // If not moderator, only show approved articles
+        if (!isModerator) {
+            filtered = filtered.filter(a => a.status === 'approved');
+        } else if (requestedStatus && requestedStatus !== 'all') {
+            filtered = filtered.filter(a => a.status === requestedStatus);
+        }
+
+        if (topic && topic !== 'all') {
+            filtered = filtered.filter(a => a.topic === topic);
+        }
+
+        if (search) {
+            filtered = filtered.filter(a => 
+                (a.title && a.title.toLowerCase().includes(search)) ||
+                (a.authorName && a.authorName.toLowerCase().includes(search)) ||
+                (a.university && a.university.toLowerCase().includes(search)) ||
+                (a.abstract && a.abstract.toLowerCase().includes(search)) ||
+                (a.keywords && a.keywords.some(k => k.toLowerCase().includes(search)))
+            );
+        }
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+            success: true,
+            total: filtered.length,
+            isModerator: isModerator,
+            articles: filtered
+        }));
+        return;
+    }
+
+    if (pathname === '/api/articles/submit' && req.method === 'POST') {
+        readBody(req, (err, body) => {
+            if (err || !body.title || !body.authorName || !body.abstract) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, error: 'Заполните обязательные поля (ФИО, тема, аннотация, университет)' }));
+                return;
+            }
+
+            articlesData = loadJson(ARTICLES_FILE, []);
+
+            const now = new Date();
+            const newArticle = {
+                id: 'art-' + Date.now(),
+                title: (body.title || '').trim(),
+                authorName: (body.authorName || '').trim(),
+                authorDegree: (body.authorDegree || 'Магистрант').trim(),
+                university: (body.university || '').trim(),
+                email: (body.email || '').trim(),
+                telegram: (body.telegram || '').trim(),
+                topic: body.topic || 'eurasia',
+                topicName: body.topicName || 'Геополитика Евразии & Сухопутные пути',
+                submittedAt: now.toISOString(),
+                approvedAt: null,
+                status: 'pending', // Requires editorial board moderation
+                doi: null,
+                views: 1,
+                abstract: (body.abstract || '').trim(),
+                keywords: Array.isArray(body.keywords) ? body.keywords : (body.keywords || '').split(/[,;]/).map(k => k.trim()).filter(Boolean),
+                content: (body.content || '').trim(),
+                bibliography: (body.bibliography || '').trim(),
+                moderatorNote: ''
+            };
+
+            articlesData.unshift(newArticle);
+            saveJson(ARTICLES_FILE, articlesData);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                success: true,
+                message: 'Ваша статья успешно отправлена в редколлегию портала «Спектр геополитики»! После экспертной проверки она появится в открытом доступе.',
+                articleId: newArticle.id
+            }));
+        });
+        return;
+    }
+
+    if (pathname === '/api/articles/moderate' && req.method === 'POST') {
+        readBody(req, (err, body) => {
+            const token = body.token || req.headers['x-moderator-token'];
+            if (token !== 'geopolitics2026' && token !== 'admin2026') {
+                res.writeHead(403, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, error: 'Неверный пароль доступа редколлегии' }));
+                return;
+            }
+
+            articlesData = loadJson(ARTICLES_FILE, []);
+            const { articleId, action, note } = body;
+            const target = articlesData.find(a => a.id === articleId);
+
+            if (!target && action !== 'clear') {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, error: 'Статья не найдена' }));
+                return;
+            }
+
+            if (action === 'approve') {
+                target.status = 'approved';
+                target.approvedAt = new Date().toISOString();
+                target.moderatorNote = note || 'Одобрено редколлегией журнала «Спектр геополитики»';
+                if (!target.doi) {
+                    const approvedCount = articlesData.filter(a => a.status === 'approved').length;
+                    target.doi = `10.5555/spektr-geo.2026.${String(approvedCount).padStart(2, '0')}`;
+                }
+            } else if (action === 'reject') {
+                target.status = 'rejected';
+                target.moderatorNote = note || 'Требуется доработка теоретической части или библиографического аппарата';
+            } else if (action === 'delete') {
+                articlesData = articlesData.filter(a => a.id !== articleId);
+            }
+
+            saveJson(ARTICLES_FILE, articlesData);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({
+                success: true,
+                message: action === 'approve' ? 'Статья успешно одобрена и опубликована в Вестнике!' : 'Статус обновлен',
+                articles: articlesData
+            }));
         });
         return;
     }

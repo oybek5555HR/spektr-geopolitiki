@@ -1743,6 +1743,7 @@ ${b.significance}
         });
 
         loadChatMessages();
+    initAcademicJournal();
     }
 
     document.querySelectorAll(".chat-ch-btn").forEach(btn => {
@@ -2301,6 +2302,813 @@ ${b.significance}
     glossarySearchInput.addEventListener("input", (e) => {
         renderGlossary(e.target.value);
     });
+
+
+    // ==================== 21. НАУЧНЫЙ ВЕСТНИК СОИСКАТЕЛЕЙ И МАГИСТРАНТОВ ====================
+    let academicArticles = [];
+    let currentArticleTopic = "all";
+    let articleSearchQuery = "";
+    let isModeratorAuthed = (sessionStorage.getItem("spektr_mod_token") === "geopolitics2026");
+    let currentModTab = "pending";
+
+    // Default sample academic articles (for GitHub Pages and initial offline state)
+    const DEFAULT_ACADEMIC_ARTICLES = [
+        {
+            id: "art-202601",
+            title: "Трансформация транзитных коридоров Центральной Евразии в условиях перестройки глобальной логистики",
+            authorName: "Шарипов Сардор Рустамович",
+            authorDegree: "Магистрант 2-го курса по направлению «Международные отношения»",
+            university: "Университет мировой экономики и дипломатии (УМЭД), Ташкент",
+            email: "sardor.sharipov.research@gmail.com",
+            telegram: "@sardor_geopolitics",
+            topic: "eurasia",
+            topicName: "Геополитика Евразии & Сухопутные пути",
+            submittedAt: "2026-03-10T14:20:00.000Z",
+            approvedAt: "2026-03-12T10:00:00.000Z",
+            status: "approved",
+            doi: "10.5555/spektr-geo.2026.01",
+            views: 312,
+            abstract: "Исследование посвящено анализу новых сухопутных маршрутов (Трансафганский коридор, МТК «Север — Юг», Средний коридор) как геоэкономического ответа на риски морских блокировок в Суэце и Баб-эль-Мандебе. Автор исследует синергию концепции Хартленда Маккиндера с современными мультимодальными магистралями и формулирует стратегические преимущества государств Центральной Азии как континентального связующего ядра.",
+            keywords: ["Евразия", "Хартленд", "Трансафганский коридор", "Шелковый путь", "Транспортная безопасность", "Центральная Азия"],
+            content: "## Введение\nВ условиях геополитической турбулентности XXI века традиционные морские коммуникации сталкиваются с уязвимостью узловых точек (choke points). Это вызывает ренессанс сухопутных артерий Евразии, предсказанный еще Хэлфордом Маккиндером и развитый классиками евразийства (П.Н. Савицкий).\n\n## 1. Концепция континентального моста\nЦентральная Азия перестает быть замкнутым пространством («landlocked») и трансформируется в связующий сухопутный перекресток («land-linked»). Ключевым проектом выступает Трансафганская железная дорога (Термез — Мазари-Шариф — Кабул — Пешавар), открывающая кратчайший выход к пакистанским портам Карачи и Гвадар.\n\n## 2. Сравнительный анализ сухопутных коридоров\n- **Средний коридор (ТИТР):** связывает Китай и ЕС через Каспий, снижая зависимость от традиционных маршрутов на 30% по времени;\n- **МТК «Север — Юг»:** обеспечивает беспрепятственный доступ рынков России и Евразийского союза к портам Персидского залива и Индии (порт Чабахар);\n- **Железная дорога Китай — Кыргызстан — Узбекистан:** сокращает путь из Восточной Азии в Южную Европу и на Ближний Восток более чем на 900 км.\n\n## 3. Выводы и практические рекомендации\n1. Сухопутная связность становится гарантом геополитического суверенитета;\n2. Государства региона получают возможность диверсифицировать внешнеторговые выходы;\n3. Контроль сухопутных хабов нейтрализует морскую блокаду талассократических держав.",
+            bibliography: "1. Маккиндер Х. Дж. Географическая ось истории // Полис. — 1995. — № 4.\n2. Савицкий П. Н. Географические особенности России. — Прага, 1927.\n3. Ханна П. Коннектография: картирование будущего глобальной цивилизации. — М.: Манн, Иванов и Фербер, 2019.\n4. Доклады Центра экономических исследований и реформ (ЦЭИР) РУз, 2025–2026 гг."
+        },
+        {
+            id: "art-202602",
+            title: "Контроль узловых проливов (Choke Points) как инструмент сдерживания: ревизия доктрины Мэхэна в Индо-Тихоокеанском регионе",
+            authorName: "Дмитриев Алексей Владимирович",
+            authorDegree: "Соискатель ученой степени PhD (кандидат полит. наук)",
+            university: "МГИМО МИД России, Москва",
+            email: "dmitriev_geopol@mgimo.ru",
+            telegram: "@dmitriev_mfa",
+            topic: "maritime",
+            topicName: "Морская мощь & Римленд",
+            submittedAt: "2026-03-25T11:15:00.000Z",
+            approvedAt: "2026-03-28T16:30:00.000Z",
+            status: "approved",
+            doi: "10.5555/spektr-geo.2026.02",
+            views: 248,
+            abstract: "В статье анализируется проекция морской мощи великих держав в критических узловых проливах Индо-Тихоокеанского бассейна (Малаккский, Зондский, Ломбокский, Тайваньский). Обосновывается неизбежность перехода от традиционной талассократии по А. Мэхэну к гибридным зонам ограничения доступа и маневра (A2/AD) с опорой на подводный флот, БПЛА и береговые ракетные комплексы.",
+            keywords: ["Sea Power", "Мэхэн", "Малаккский пролив", "Choke Points", "Индо-Тихоокеанский регион", "A2/AD", "Талассократия"],
+            content: "## Введение\nАдмирал Альфред Тэйер Мэхэн постулировал: господство на море достигается путем уничтожения вражеского флота в генеральном сражении и удержания контроля над ключевыми линиями морских коммуникаций (SLOCs). В XXI веке этот постулат сталкивается с радикальной технологической трансформацией.\n\n## 1. «Малаккская дилемма» и альтернативные фарватеры\nБолее 80% импорта сырой нефти стран Восточной Азии транспортируется через Малаккский пролив шириной всего 2.8 км в самой узкой точке (канал Филлипс). Создание систем A2/AD превращает узкие проливы из зон господства флота в ловушки для крупных надводных платформ (авианосцев).\n\n## 2. Стратегия «Нити жемчуга» vs альянс QUAD\nСтолкновение концепций выражается в создании опорных баз двойного назначения (Гвадар, Квантан, Хамбантота) в противовес патрульным миссиям союза США, Индии, Японии и Австралии.\n\n## 3. Заключение\nКлассическая концепция морского господства уступает место «стратегии морского воспрещения» (Sea Denial). Малые и средние державы прибрежной зоны Римленда приобретают асимметричные инструменты влияния на глобальную торговлю.",
+            bibliography: "1. Мэхэн А. Т. Влияние морской силы на историю (1660–1783). — М.: Terra Fantastica, 2002.\n2. Спайкмен Н. География мира. — Нью-Йорк, 1944.\n3. Kaplan R. D. Monsoon: The Indian Ocean and the Future of American Power. — Random House, 2010.\n4. Миршаймер Дж. Трагедия политики великих держав. — М.: ВШЭ, 2016."
+        },
+        {
+            id: "art-202603",
+            title: "Геополитика критических минералов и полупроводниковый суверенитет: пространственные измерения Номоса Земли",
+            authorName: "Абдуллаева Нигора Каримовна",
+            authorDegree: "Магистрант направления «Глобальная экономическая безопасность»",
+            university: "Национальный университет Узбекистана имени Мирзо Улугбека (НУУз)",
+            email: "nigora.abdullaeva.nuu@edu.uz",
+            telegram: "@nigora_analytics",
+            topic: "resources",
+            topicName: "Техногеополитика & Ресурсы",
+            submittedAt: "2026-04-02T09:00:00.000Z",
+            approvedAt: "2026-04-05T12:00:00.000Z",
+            status: "approved",
+            doi: "10.5555/spektr-geo.2026.03",
+            views: 195,
+            abstract: "Статья исследует трансформацию геополитического соперничества вокруг цепочек создания стоимости микрочипов и добычи критических элементов (литий, галлий, германий, РЗМ). Опираясь на концепцию Карла Шмитта о «Номосе Земли», автор доказывает, что география распределения высокотехнологичных производств определяет границы новых мировых союзов XXI века.",
+            keywords: ["Номос Земли", "Карл Шмитт", "Полупроводники", "Критические минералы", "Технологический суверенитет", "Геоэкономика"],
+            content: "## Введение\nВ концепции Карла Шмитта «Номос Земли» первичен: пространственный порядок определяется разделом и присвоением территорий и их базовых ресурсов. В XXI веке этот раздел сместился в сферу высокотехнологичной литографии и редкоземельного сырья.\n\n## 1. Географическая асимметрия полупроводниковой индустрии\nКонцентрация 92% мощностей производства передовых суб-7нм микросхем на одном острове (Тайвань, TSMC) формирует беспрецедентный геополитический риск мирового масштаба («Кремниевый щит»).\n\n## 2. Борьба за редкоземельные элементы и литий\nКонтроль Китая над переработкой 70% мирового лития и 90% редкоземельных оксидов вынуждает США и ЕС создавать альянсы минеральной безопасности (Minerals Security Partnership). Богатейшие месторождения меди, молибдена, вольфрама и лития в Центральной Азии (Узбекистан, Казахстан) делают регион стратегическим партнером мировых центров силы.\n\n## 3. Выводы\nТехнологическая самодостаточность без обеспеченности ресурсной базой невозможна. Государства-обладатели минеральных ресурсов получают мощные рычаги геополитического торга.",
+            bibliography: "1. Шмитт К. Номос Земли в праве народов jus publicum europaeum. — СПб.: Владимир Даль, 2008.\n2. Миллер К. Война чипов: битва за самую критическую технологию в мире. — 2022.\n3. Валлерстайн И. Мир-система Модерна. — Т. 1-4, 2015.\n4. Геологическая служба США (USGS). Mineral Commodity Summaries 2025."
+        }
+    ];
+
+    async function loadAcademicArticles() {
+        // Try loading from localStorage first
+        const saved = localStorage.getItem("spektr_academic_articles_v1");
+        if (saved) {
+            try {
+                academicArticles = JSON.parse(saved);
+            } catch (e) {
+                academicArticles = DEFAULT_ACADEMIC_ARTICLES;
+            }
+        } else {
+            academicArticles = DEFAULT_ACADEMIC_ARTICLES;
+            localStorage.setItem("spektr_academic_articles_v1", JSON.stringify(academicArticles));
+        }
+
+        // If connected to server, synchronize with backend
+        try {
+            const tokenQuery = isModeratorAuthed ? "?token=geopolitics2026" : "";
+            const res = await fetch("/api/articles" + tokenQuery);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.articles && data.articles.length > 0) {
+                    academicArticles = data.articles;
+                    localStorage.setItem("spektr_academic_articles_v1", JSON.stringify(academicArticles));
+                }
+            }
+        } catch (e) {
+            // Running statically on GitHub Pages or file://, uses local state
+        }
+
+        updateAcademicMetrics();
+        renderAcademicArticles();
+    }
+
+    function saveAcademicArticlesLocally() {
+        localStorage.setItem("spektr_academic_articles_v1", JSON.stringify(academicArticles));
+        updateAcademicMetrics();
+    }
+
+    function updateAcademicMetrics() {
+        const approvedCount = academicArticles.filter(a => a.status === "approved").length;
+        const pendingCount = academicArticles.filter(a => a.status === "pending").length;
+        const totalViews = academicArticles.reduce((acc, a) => acc + (a.views || 0), 0);
+
+        const elApproved = document.getElementById("statArticlesApproved");
+        const elViews = document.getElementById("statArticlesViews");
+        const elPending = document.getElementById("statArticlesPending");
+        const elBadge = document.getElementById("modPendingBadge");
+
+        if (elApproved) elApproved.textContent = approvedCount;
+        if (elViews) elViews.textContent = totalViews;
+        if (elPending) elPending.textContent = pendingCount;
+        if (elBadge) elBadge.textContent = pendingCount;
+    }
+
+    function renderAcademicArticles() {
+        const container = document.getElementById("articlesGrid");
+        if (!container) return;
+
+        let filtered = academicArticles.filter(a => a.status === "approved");
+
+        if (currentArticleTopic !== "all") {
+            filtered = filtered.filter(a => a.topic === currentArticleTopic);
+        }
+
+        if (articleSearchQuery) {
+            const q = articleSearchQuery.toLowerCase();
+            filtered = filtered.filter(a =>
+                (a.title && a.title.toLowerCase().includes(q)) ||
+                (a.authorName && a.authorName.toLowerCase().includes(q)) ||
+                (a.university && a.university.toLowerCase().includes(q)) ||
+                (a.abstract && a.abstract.toLowerCase().includes(q)) ||
+                (a.keywords && a.keywords.some(k => k.toLowerCase().includes(q)))
+            );
+        }
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="col-span-full py-12 text-center glass-panel rounded-2xl border border-slate-800">
+                    <div class="w-12 h-12 rounded-full bg-indigo-500/10 text-indigo-400 flex items-center justify-center mx-auto mb-3 text-xl">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h4 class="text-base font-bold text-slate-200 mb-1">Статьи в данном направлении пока не опубликованы</h4>
+                    <p class="text-xs text-slate-400 max-w-md mx-auto mb-4">Будьте первым исследователем! Подайте вашу работу на рецензирование в редколлегию.</p>
+                    <button id="btnEmptySubmit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider">
+                        Подать научную статью
+                    </button>
+                </div>
+            `;
+            const emptyBtn = document.getElementById("btnEmptySubmit");
+            if (emptyBtn) {
+                emptyBtn.addEventListener("click", () => {
+                    const modal = document.getElementById("submitArticleModal");
+                    if (modal) modal.classList.remove("hidden");
+                });
+            }
+            return;
+        }
+
+        container.innerHTML = filtered.map(article => {
+            const dateStr = article.approvedAt 
+                ? new Date(article.approvedAt).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" })
+                : "2026 г.";
+
+            let topicBadgeColor = "indigo";
+            if (article.topic === "eurasia") topicBadgeColor = "amber";
+            else if (article.topic === "maritime") topicBadgeColor = "blue";
+            else if (article.topic === "resources") topicBadgeColor = "emerald";
+
+            return `
+                <div class="glass-panel p-6 rounded-2xl border border-indigo-500/20 hover:border-indigo-400/50 transition-all flex flex-col justify-between group hover:shadow-xl hover:shadow-indigo-500/10 relative">
+                    <!-- Top Ribbon -->
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-3">
+                            <span class="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-${topicBadgeColor}-500/15 border border-${topicBadgeColor}-500/30 text-${topicBadgeColor}-300">
+                                ${escapeHtml(article.topicName || 'Геополитика')}
+                            </span>
+                            <span class="text-[10px] font-mono text-slate-400 flex items-center gap-1">
+                                <i class="fa-solid fa-check-double text-emerald-400"></i> Рецензировано
+                            </span>
+                        </div>
+
+                        <!-- Title -->
+                        <h3 class="text-base font-bold text-white group-hover:text-amber-300 transition-colors leading-snug mb-2 font-serif-title">
+                            ${escapeHtml(article.title)}
+                        </h3>
+
+                        <!-- Author Info -->
+                        <div class="mb-3 pb-3 border-b border-slate-800/80">
+                            <div class="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
+                                <i class="fa-solid fa-user-graduate text-xs"></i>
+                                ${escapeHtml(article.authorName)}
+                            </div>
+                            <div class="text-[11px] text-slate-300 mt-0.5 font-medium">
+                                ${escapeHtml(article.authorDegree)}
+                            </div>
+                            <div class="text-[11px] text-slate-400 mt-0.5 flex items-center gap-1">
+                                <i class="fa-solid fa-building-columns text-[10px] text-slate-400"></i>
+                                ${escapeHtml(article.university)}
+                            </div>
+                        </div>
+
+                        <!-- Abstract Preview -->
+                        <p class="text-xs text-slate-300 line-clamp-3 leading-relaxed mb-4">
+                            ${escapeHtml(article.abstract)}
+                        </p>
+
+                        <!-- Keywords -->
+                        <div class="flex flex-wrap gap-1.5 mb-4">
+                            ${(article.keywords || []).slice(0, 4).map(k => `
+                                <span class="px-2 py-0.5 rounded text-[10px] bg-slate-900 text-slate-300 border border-slate-800">
+                                    #${escapeHtml(k)}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <!-- Card Footer Actions -->
+                    <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between gap-2 mt-2">
+                        <div class="text-[10px] text-slate-400 font-mono">
+                            DOI: ${article.doi || '10.5555/spektr-geo.2026.01'}<br>
+                            <span>${dateStr}</span> • <span class="text-slate-400"><i class="fa-solid fa-eye text-indigo-400"></i> ${article.views || 1}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="window.readAcademicArticle('${article.id}')" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md shadow-indigo-600/20 cursor-pointer">
+                                <i class="fa-solid fa-book-reader"></i>
+                                <span>Читать</span>
+                            </button>
+                            <button onclick="window.downloadAcademicArticlePdf('${article.id}')" title="Скачать PDF статьи" class="p-1.5 rounded-lg bg-slate-900 border border-slate-700 hover:border-amber-400 text-amber-400 text-xs transition-colors cursor-pointer">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+
+    // Read full academic article
+    window.readAcademicArticle = function(articleId) {
+        playSound("click");
+        const article = academicArticles.find(a => a.id === articleId);
+        if (!article) return;
+
+        // Increment views
+        article.views = (article.views || 0) + 1;
+        saveAcademicArticlesLocally();
+
+        const modal = document.getElementById("articleReaderModal");
+        const container = document.getElementById("articleReaderContent");
+        if (!modal || !container) return;
+
+        const dateStr = article.approvedAt 
+            ? new Date(article.approvedAt).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" })
+            : "2026 г.";
+
+        // Convert body markdown headings and bold text
+        const formattedBody = (article.content || "")
+            .split('\n')
+            .map(line => {
+                const trimmed = line.trim();
+                if (trimmed.startsWith('## ')) {
+                    return `<h3 class="text-lg font-bold text-amber-400 font-serif-title mt-6 mb-3 border-b border-amber-500/30 pb-1">${escapeHtml(trimmed.slice(3))}</h3>`;
+                }
+                if (trimmed.startsWith('- ')) {
+                    return `<li class="text-xs sm:text-sm text-slate-300 ml-4 mb-2 leading-relaxed list-disc">${trimmed.slice(2).replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')}</li>`;
+                }
+                if (trimmed.startsWith('1. ') || trimmed.startsWith('2. ') || trimmed.startsWith('3. ')) {
+                    return `<li class="text-xs sm:text-sm text-slate-300 ml-4 mb-2 leading-relaxed list-decimal">${trimmed.slice(3).replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')}</li>`;
+                }
+                if (trimmed === '') return '<div class="h-2"></div>';
+                return `<p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-3 text-justify">${trimmed.replace(/\*\*(.*?)\*\*/g, '<strong class="text-white">$1</strong>')}</p>`;
+            })
+            .join('');
+
+        container.innerHTML = `
+            <!-- Official Journal Stamp -->
+            <div class="border-b border-indigo-500/30 pb-4 mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <div class="text-xs uppercase font-extrabold tracking-widest text-indigo-400">НАУЧНЫЙ ВЕСТНИК «СПЕКТР ГЕОПОЛИТИКИ»</div>
+                    <div class="text-[11px] text-slate-400">Рецензируемый электронный журнал • ISSN (Online): 2026-GEO-300</div>
+                </div>
+                <div class="text-right text-[11px] font-mono text-slate-300 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-slate-800">
+                    <span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check"></i> Одобрено редколлегией</span><br>
+                    <span>DOI: ${article.doi || '10.5555/spektr-geo.2026.01'}</span>
+                </div>
+            </div>
+
+            <!-- Title & Metadata -->
+            <div class="text-center max-w-3xl mx-auto mb-8">
+                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 inline-block mb-3">
+                    ${escapeHtml(article.topicName || 'Геополитическое исследование')}
+                </span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold font-serif-title text-white leading-tight mb-4">
+                    ${escapeHtml(article.title)}
+                </h1>
+                <div class="text-base font-bold text-amber-300">
+                    ${escapeHtml(article.authorName)}
+                </div>
+                <div class="text-xs text-indigo-200 mt-1">
+                    ${escapeHtml(article.authorDegree)}
+                </div>
+                <div class="text-xs text-slate-400 mt-1">
+                    ${escapeHtml(article.university)} • Дата публикации: ${dateStr}
+                </div>
+            </div>
+
+            <!-- Abstract Box -->
+            <div class="glass-panel p-5 rounded-xl border border-indigo-500/30 bg-slate-950/80 mb-8">
+                <div class="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-2 flex items-center gap-1.5">
+                    <i class="fa-solid fa-align-left"></i> Аннотация (Abstract)
+                </div>
+                <p class="text-xs sm:text-sm text-slate-200 leading-relaxed italic text-justify mb-3">
+                    ${escapeHtml(article.abstract)}
+                </p>
+                <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-slate-800">
+                    <span class="text-[11px] font-semibold text-slate-400">Ключевые слова:</span>
+                    ${(article.keywords || []).map(k => `
+                        <span class="px-2 py-0.5 rounded bg-slate-900 border border-slate-700 text-indigo-300 text-[11px]">
+                            ${escapeHtml(k)}
+                        </span>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- Main Paper Text -->
+            <div class="article-body max-w-none text-slate-200 mb-10 leading-relaxed font-sans">
+                ${formattedBody}
+            </div>
+
+            <!-- Bibliography -->
+            ${article.bibliography ? `
+                <div class="border-t border-slate-800 pt-6 mb-8">
+                    <h3 class="text-base font-bold text-amber-400 font-serif-title mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-list-ol text-sm"></i> Список использованной литературы (Библиография)
+                    </h3>
+                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-xs text-slate-300 font-mono leading-relaxed whitespace-pre-wrap">
+                        ${escapeHtml(article.bibliography)}
+                    </div>
+                </div>
+            ` : ''}
+
+            <!-- Bottom Action Bar -->
+            <div class="border-t border-slate-800 pt-6 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-2">
+                    <button onclick="window.downloadAcademicArticlePdf('${article.id}')" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-indigo-600/30 cursor-pointer">
+                        <i class="fa-solid fa-file-pdf"></i> Скачать статью (PDF)
+                    </button>
+                    <button onclick="window.copyCitation('${article.id}')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-quote-right text-amber-400"></i> Цитировать (ГОСТ / APA)
+                    </button>
+                </div>
+                <button onclick="document.getElementById('articleReaderModal').classList.add('hidden')" class="px-4 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-300 hover:text-white text-xs font-semibold cursor-pointer">
+                    Закрыть окно чтения
+                </button>
+            </div>
+        `;
+
+        modal.classList.remove("hidden");
+    };
+
+    // Copy bibliographic citation
+    window.copyCitation = function(articleId) {
+        const article = academicArticles.find(a => a.id === articleId);
+        if (!article) return;
+        const year = 2026;
+        const citation = `${article.authorName}. ${article.title} // Научный вестник «Спектр геополитики». — ${year}. — DOI: ${article.doi || '10.5555/spektr-geo.2026.01'}. URL: https://oybek5555hr.github.io/spektr-geopolitiki/#academic-journal`;
+        navigator.clipboard.writeText(citation).then(() => {
+            showToast("Библиографическая ссылка скопирована в буфер обмена!");
+            playSound("badge");
+        }).catch(() => {
+            showToast("Ссылка: " + citation.slice(0, 40) + "...");
+        });
+    };
+
+    // Download formatted PDF for academic article
+    window.downloadAcademicArticlePdf = function(articleId) {
+        playSound("click");
+        const article = academicArticles.find(a => a.id === articleId);
+        if (!article) return;
+
+        showToast(`Формирование PDF статьи «${article.title}»...`);
+
+        const pdfContainer = document.getElementById("pdfExportContainer");
+        if (!pdfContainer) return;
+
+        const dateStr = article.approvedAt 
+            ? new Date(article.approvedAt).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" })
+            : "2026 г.";
+
+        pdfContainer.innerHTML = `
+            <div id="pdfArticleSheet" style="font-family: 'Times New Roman', serif; color: #111827; padding: 40px; background: #ffffff; line-height: 1.6; width: 750px; margin: 0 auto; border: 2px solid #312e81;">
+                <!-- Header Stamp -->
+                <div style="border-bottom: 2px solid #312e81; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <div style="font-size: 16px; font-weight: bold; letter-spacing: 2px; color: #312e81; text-transform: uppercase;">НАУЧНЫЙ ВЕСТНИК «СПЕКТР ГЕОПОЛИТИКИ»</div>
+                        <div style="font-size: 11px; color: #4b5563; text-transform: uppercase; letter-spacing: 1px;">Рецензируемый электронный академический репозиторий</div>
+                    </div>
+                    <div style="border: 1px solid #312e81; padding: 4px 10px; font-size: 10px; font-weight: bold; color: #312e81; text-align: right;">
+                        DOI: ${article.doi || '10.5555/spektr-geo.2026.01'}<br>
+                        ДАТА: ${dateStr}
+                    </div>
+                </div>
+
+                <!-- Article Title -->
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <h1 style="font-size: 20px; font-weight: bold; margin: 0 0 8px 0; color: #1e1b4b; line-height: 1.3;">${article.title}</h1>
+                    <div style="font-size: 14px; font-weight: bold; color: #312e81;">${article.authorName}</div>
+                    <div style="font-size: 11px; color: #4b5563;">${article.authorDegree}</div>
+                    <div style="font-size: 11px; color: #6b7280;">${article.university}</div>
+                </div>
+
+                <!-- Abstract -->
+                <div style="background: #eef2ff; border-left: 4px solid #4f46e5; padding: 12px 16px; margin-bottom: 20px; font-size: 12px; text-align: justify;">
+                    <strong>Аннотация:</strong> ${article.abstract}
+                    <div style="margin-top: 6px; font-size: 11px; color: #3730a3;">
+                        <strong>Ключевые слова:</strong> ${(article.keywords || []).join(', ')}
+                    </div>
+                </div>
+
+                <!-- Body -->
+                <div style="font-size: 12px; text-align: justify; margin-bottom: 24px; white-space: pre-wrap;">
+${article.content}
+                </div>
+
+                <!-- Bibliography -->
+                ${article.bibliography ? `
+                    <div style="border-top: 1px solid #e5e7eb; padding-top: 12px; margin-bottom: 20px;">
+                        <div style="font-size: 12px; font-weight: bold; text-transform: uppercase; color: #312e81; margin-bottom: 6px;">Библиографический список:</div>
+                        <div style="font-size: 10.5px; color: #374151; white-space: pre-wrap;">${article.bibliography}</div>
+                    </div>
+                ` : ''}
+
+                <!-- Editorial Certificate -->
+                <div style="border: 1px solid #10b981; background: #ecfdf5; padding: 8px 12px; font-size: 10px; color: #065f46; text-align: center; border-radius: 4px;">
+                    ✓ Статья прошла экспертную экспертизу и утверждена редколлегией портала «Спектр геополитики»
+                </div>
+            </div>
+        `;
+
+        setTimeout(() => {
+            const sheet = document.getElementById("pdfArticleSheet");
+            if (!sheet) return;
+
+            const opt = {
+                margin: 8,
+                filename: `[Геополитика]_${article.authorName}_${article.title.slice(0, 30)}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            if (window.html2pdf) {
+                window.html2pdf().from(sheet).set(opt).save().then(() => {
+                    showToast(`Статья «${article.title.slice(0, 25)}...» успешно экспортирована в PDF!`);
+                    playSound("badge");
+                    pdfContainer.innerHTML = "";
+                }).catch(() => {
+                    fallbackTxtArticleDownload(article);
+                });
+            } else {
+                fallbackTxtArticleDownload(article);
+            }
+        }, 300);
+    };
+
+    function fallbackTxtArticleDownload(article) {
+        const text = `НАУЧНЫЙ ВЕСТНИК «СПЕКТР ГЕОПОЛИТИКИ»\nDOI: ${article.doi || '10.5555/spektr-geo.2026.01'}\n\nНАЗВАНИЕ: ${article.title}\nАВТОР: ${article.authorName} (${article.authorDegree})\nОРГАНИЗАЦИЯ: ${article.university}\n\nАННОТАЦИЯ:\n${article.abstract}\n\nКЛЮЧЕВЫЕ СЛОВА: ${(article.keywords || []).join(', ')}\n\nТЕКСТ ИССЛЕДОВАНИЯ:\n${article.content}\n\nБИБЛИОГРАФИЯ:\n${article.bibliography}\n\n---\nИздано: Портал «Спектр геополитики»`;
+        const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `[Геополитика]_${article.authorName}_${article.title.slice(0, 30)}.txt`;
+        a.click();
+        showToast("Статья скачана в текстовом формате TXT!");
+    }
+
+    // Submit Article Handling
+    function setupArticleSubmission() {
+        const openBtn = document.getElementById("btnOpenSubmitArticle");
+        const modal = document.getElementById("submitArticleModal");
+        const closeBtn = document.getElementById("closeSubmitModalBtn");
+        const cancelBtn = document.getElementById("btnCancelSubmit");
+        const form = document.getElementById("submitArticleForm");
+
+        if (openBtn && modal) {
+            openBtn.addEventListener("click", () => {
+                playSound("click");
+                modal.classList.remove("hidden");
+            });
+        }
+
+        if (closeBtn && modal) {
+            closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
+        }
+
+        if (cancelBtn && modal) {
+            cancelBtn.addEventListener("click", () => modal.classList.add("hidden"));
+        }
+
+        if (form) {
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                playSound("click");
+
+                const authorName = document.getElementById("formAuthorName").value.trim();
+                const authorDegree = document.getElementById("formAuthorDegree").value;
+                const university = document.getElementById("formUniversity").value.trim();
+                const topic = document.getElementById("formTopic").value;
+                const topicNames = {
+                    "eurasia": "Геополитика Евразии & Сухопутные пути",
+                    "maritime": "Морская мощь & Римленд (Choke Points)",
+                    "resources": "Техногеополитика, Ресурсы & Чипы",
+                    "strategy": "Теория международных отношений & Баланс сил"
+                };
+                const email = document.getElementById("formEmail").value.trim();
+                const telegram = document.getElementById("formTelegram").value.trim();
+                const title = document.getElementById("formTitle").value.trim();
+                const abstract = document.getElementById("formAbstract").value.trim();
+                const keywords = document.getElementById("formKeywords").value.split(/[,;]/).map(k => k.trim()).filter(Boolean);
+                const content = document.getElementById("formContent").value.trim();
+                const bibliography = document.getElementById("formBibliography").value.trim();
+
+                const newArticle = {
+                    id: "art-" + Date.now(),
+                    title,
+                    authorName,
+                    authorDegree,
+                    university,
+                    email,
+                    telegram,
+                    topic,
+                    topicName: topicNames[topic] || "Геополитика",
+                    submittedAt: new Date().toISOString(),
+                    approvedAt: null,
+                    status: "pending", // Waiting for moderation
+                    doi: null,
+                    views: 1,
+                    abstract,
+                    keywords,
+                    content,
+                    bibliography,
+                    moderatorNote: ""
+                };
+
+                // Add to local state
+                academicArticles.unshift(newArticle);
+                saveAcademicArticlesLocally();
+
+                // Post to server if live
+                try {
+                    fetch("/api/articles/submit", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(newArticle)
+                    });
+                } catch (err) {}
+
+                form.reset();
+                modal.classList.add("hidden");
+                playSound("badge");
+
+                showToast("Ваша статья успешно отправлена в редколлегию! После одобрения она появится на сайте.");
+                updateAcademicMetrics();
+
+                // If moderator panel is open, refresh it
+                if (isModeratorAuthed) {
+                    renderModeratorDashboard();
+                }
+            });
+        }
+    }
+
+    // Moderator Cabinet & Workflow
+    function setupModeratorPanel() {
+        const openBtn = document.getElementById("btnOpenModerator");
+        const modal = document.getElementById("moderatorModal");
+        const closeBtn = document.getElementById("closeModeratorModalBtn");
+        const loginBtn = document.getElementById("modLoginBtn");
+        const passInput = document.getElementById("modPassInput");
+        const authError = document.getElementById("modAuthError");
+        const authGate = document.getElementById("modAuthGate");
+        const dashboard = document.getElementById("modDashboard");
+        const logoutBtn = document.getElementById("modLogoutBtn");
+
+        const tabPending = document.getElementById("modTabPending");
+        const tabApproved = document.getElementById("modTabApproved");
+        const tabRejected = document.getElementById("modTabRejected");
+
+        function updateModView() {
+            if (isModeratorAuthed) {
+                authGate.classList.add("hidden");
+                dashboard.classList.remove("hidden");
+                renderModeratorDashboard();
+            } else {
+                authGate.classList.remove("hidden");
+                dashboard.classList.add("hidden");
+            }
+        }
+
+        if (openBtn && modal) {
+            openBtn.addEventListener("click", () => {
+                playSound("click");
+                updateModView();
+                modal.classList.remove("hidden");
+            });
+        }
+
+        if (closeBtn && modal) {
+            closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
+        }
+
+        if (loginBtn && passInput) {
+            loginBtn.addEventListener("click", () => {
+                const pass = passInput.value.trim();
+                if (pass === "geopolitics2026" || pass === "admin2026") {
+                    isModeratorAuthed = true;
+                    sessionStorage.setItem("spektr_mod_token", "geopolitics2026");
+                    authError.classList.add("hidden");
+                    passInput.value = "";
+                    playSound("badge");
+                    updateModView();
+                } else {
+                    authError.classList.remove("hidden");
+                    playSound("click");
+                }
+            });
+            passInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") loginBtn.click();
+            });
+        }
+
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", () => {
+                isModeratorAuthed = false;
+                sessionStorage.removeItem("spektr_mod_token");
+                updateModView();
+            });
+        }
+
+        // Tab buttons
+        function setActiveTab(tab) {
+            currentModTab = tab;
+            [tabPending, tabApproved, tabRejected].forEach(btn => {
+                if (!btn) return;
+                btn.classList.remove("bg-amber-500", "text-slate-950");
+                btn.classList.add("bg-slate-900", "text-slate-300", "border", "border-slate-700");
+            });
+            if (tab === "pending" && tabPending) {
+                tabPending.classList.add("bg-amber-500", "text-slate-950");
+                tabPending.classList.remove("bg-slate-900", "text-slate-300", "border");
+            } else if (tab === "approved" && tabApproved) {
+                tabApproved.classList.add("bg-amber-500", "text-slate-950");
+                tabApproved.classList.remove("bg-slate-900", "text-slate-300", "border");
+            } else if (tab === "rejected" && tabRejected) {
+                tabRejected.classList.add("bg-amber-500", "text-slate-950");
+                tabRejected.classList.remove("bg-slate-900", "text-slate-300", "border");
+            }
+            renderModeratorDashboard();
+        }
+
+        if (tabPending) tabPending.addEventListener("click", () => { playSound("click"); setActiveTab("pending"); });
+        if (tabApproved) tabApproved.addEventListener("click", () => { playSound("click"); setActiveTab("approved"); });
+        if (tabRejected) tabRejected.addEventListener("click", () => { playSound("click"); setActiveTab("rejected"); });
+    }
+
+    function renderModeratorDashboard() {
+        const container = document.getElementById("modArticlesList");
+        if (!container) return;
+
+        const filtered = academicArticles.filter(a => a.status === currentModTab);
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div class="py-8 text-center glass-panel rounded-xl border border-slate-800 text-slate-400 text-xs">
+                    В данной категории нет статей.
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = filtered.map(a => {
+            const dateStr = new Date(a.submittedAt).toLocaleDateString("ru-RU", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+
+            return `
+                <div class="glass-panel p-5 rounded-xl border border-slate-800 hover:border-amber-500/40 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex-grow">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${a.status === 'approved' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40' : (a.status === 'pending' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-red-500/20 text-red-300 border border-red-500/40')}">
+                                ${a.status === 'approved' ? 'Опубликовано' : (a.status === 'pending' ? 'Ожидает одобрения' : 'Отклонено')}
+                            </span>
+                            <span class="text-[11px] text-slate-400 font-mono">${dateStr}</span>
+                            ${a.doi ? `<span class="text-[11px] font-mono text-indigo-300">DOI: ${a.doi}</span>` : ''}
+                        </div>
+                        <h4 class="text-sm font-bold text-white mb-1 font-serif-title">${escapeHtml(a.title)}</h4>
+                        <div class="text-xs text-indigo-300 font-semibold">${escapeHtml(a.authorName)} • ${escapeHtml(a.authorDegree)}</div>
+                        <div class="text-xs text-slate-400">${escapeHtml(a.university)} | Email: ${escapeHtml(a.email)} | TG: ${escapeHtml(a.telegram || '—')}</div>
+                        <p class="text-xs text-slate-300 mt-2 line-clamp-2 italic bg-slate-950/60 p-2.5 rounded-lg border border-slate-900">${escapeHtml(a.abstract)}</p>
+                    </div>
+
+                    <!-- Moderator Decision Actions -->
+                    <div class="flex flex-row md:flex-col items-end gap-2 shrink-0">
+                        <button onclick="window.readAcademicArticle('${a.id}')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-eye text-indigo-400"></i> Просмотр
+                        </button>
+                        ${a.status !== 'approved' ? `
+                            <button onclick="window.moderateArticle('${a.id}', 'approve')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all shadow-md shadow-emerald-600/20 cursor-pointer">
+                                <i class="fa-solid fa-check"></i> Одобрить
+                            </button>
+                        ` : ''}
+                        ${a.status !== 'rejected' ? `
+                            <button onclick="window.moderateArticle('${a.id}', 'reject')" class="px-3 py-1.5 rounded-lg bg-amber-600/30 border border-amber-600/60 hover:bg-amber-600/50 text-amber-200 text-xs font-semibold flex items-center gap-1.5 cursor-pointer">
+                                <i class="fa-solid fa-xmark"></i> Отклонить
+                            </button>
+                        ` : ''}
+                        <button onclick="window.moderateArticle('${a.id}', 'delete')" title="Удалить навсегда" class="p-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 text-xs cursor-pointer">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+
+    // Moderate action (Approve / Reject / Delete)
+    window.moderateArticle = async function(articleId, action) {
+        playSound("click");
+        const target = academicArticles.find(a => a.id === articleId);
+        if (!target && action !== 'clear') return;
+
+        if (action === "approve") {
+            target.status = "approved";
+            target.approvedAt = new Date().toISOString();
+            if (!target.doi) {
+                const approvedCount = academicArticles.filter(a => a.status === "approved").length;
+                target.doi = `10.5555/spektr-geo.2026.${String(approvedCount).padStart(2, '0')}`;
+            }
+            showToast(`Статья «${target.title.slice(0, 30)}...» одобрена и опубликована в Вестнике!`);
+            playSound("badge");
+        } else if (action === "reject") {
+            target.status = "rejected";
+            showToast(`Статья «${target.title.slice(0, 30)}...» отклонена редколлегией.`);
+        } else if (action === "delete") {
+            if (!confirm("Вы уверены, что хотите удалить эту статью?")) return;
+            academicArticles = academicArticles.filter(a => a.id !== articleId);
+            showToast("Статья удалена.");
+        }
+
+        saveAcademicArticlesLocally();
+        renderAcademicArticles();
+        renderModeratorDashboard();
+
+        // Sync with backend
+        try {
+            await fetch("/api/articles/moderate", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    token: "geopolitics2026",
+                    articleId,
+                    action
+                })
+            });
+        } catch (e) {}
+    };
+
+    function initAcademicJournal() {
+        loadAcademicArticles();
+        setupArticleSubmission();
+        setupModeratorPanel();
+
+        // Topic filter buttons
+        const topicButtons = document.querySelectorAll(".article-topic-btn");
+        topicButtons.forEach(btn => {
+            btn.addEventListener("click", () => {
+                playSound("click");
+                currentArticleTopic = btn.getAttribute("data-topic");
+                topicButtons.forEach(b => {
+                    b.classList.remove("bg-indigo-600", "text-white");
+                    b.classList.add("bg-slate-900", "text-slate-300", "border", "border-slate-700");
+                });
+                btn.classList.add("bg-indigo-600", "text-white");
+                btn.classList.remove("bg-slate-900", "text-slate-300", "border", "border-slate-700");
+                renderAcademicArticles();
+            });
+        });
+
+        // Search input
+        const searchInput = document.getElementById("articlesSearchInput");
+        if (searchInput) {
+            searchInput.addEventListener("input", (e) => {
+                articleSearchQuery = e.target.value.trim();
+                renderAcademicArticles();
+            });
+        }
+    }
 
     // ==================== 20. ИНИЦИАЛИЗАЦИЯ ВСЕХ МОДУЛЕЙ ====================
     syncStatsFromServer();
