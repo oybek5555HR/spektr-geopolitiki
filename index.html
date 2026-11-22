@@ -442,26 +442,44 @@
             </div>
         </div>
 
-        <!-- Dynamic Results Counter -->
-        <div class="flex items-center justify-between text-xs text-slate-400 mb-6">
-            <div>
-                Найдено авторов: <span id="authorsCount" class="font-bold text-amber-400">0</span> | Книг в выборке: <span id="booksCount" class="font-bold text-amber-400">0</span>
-                <span id="activeFilterBadge" class="hidden ml-2 px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold"></span>
+        <!-- Dynamic Results Counter & View Mode Switcher -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-slate-400 mb-6 pb-4 border-b border-slate-800/80">
+            <!-- View Mode Switcher (Books Showcase vs Authors Grid) -->
+            <div class="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-slate-800 self-start sm:self-auto">
+                <button id="viewBooksBtn" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-500 text-slate-950 shadow-md flex items-center gap-1.5">
+                    <i class="fa-solid fa-book-bookmark"></i>
+                    <span>Все книги (42 труда)</span>
+                </button>
+                <button id="viewAuthorsBtn" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-1.5">
+                    <i class="fa-solid fa-users"></i>
+                    <span>По авторам (20)</span>
+                </button>
             </div>
-            <div class="flex items-center gap-3">
-                <span>Сортировка:</span>
-                <select id="sortSelect" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-300 text-xs focus:outline-none focus:border-amber-500">
-                    <option value="chronological">Хронологическая (от классиков к современникам)</option>
-                    <option value="popular">По популярности (просмотрам)</option>
-                    <option value="downloads">По количеству скачиваний</option>
-                    <option value="alpha">По имени автора (А-Я)</option>
-                    <option value="books">По числу трудов</option>
-                </select>
+
+            <div class="flex items-center gap-4">
+                <div>
+                    Показано: <span id="booksCount" class="font-bold text-amber-400">42</span> книг • <span id="authorsCount" class="font-bold text-slate-300">20</span> мыслителей
+                    <span id="activeFilterBadge" class="hidden ml-2 px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold"></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="hidden md:inline">Сортировка:</span>
+                    <select id="sortSelect" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-slate-300 text-xs focus:outline-none focus:border-amber-500">
+                        <option value="chronological">По эпохам (от Ратцеля к современникам)</option>
+                        <option value="popular">По популярности (просмотрам)</option>
+                        <option value="downloads">По числу скачиваний</option>
+                        <option value="alpha">По названию книги (А-Я)</option>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <!-- Authors Grid -->
-        <div id="authorsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- 1. Books Showcase Grid (Prominently visible books with 1-click downloads) -->
+        <div id="booksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <!-- Injected via JavaScript -->
+        </div>
+
+        <!-- 2. Authors Grid (Alternate view) -->
+        <div id="authorsGrid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             <!-- Injected via JavaScript -->
         </div>
 

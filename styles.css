@@ -331,6 +331,22 @@ h1, h2, h3, .font-serif-title {
     }
 }
 
+/* Book Showcase Card */
+.book-showcase-card {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.book-showcase-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(245, 158, 11, 0.55);
+    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.7), 0 0 20px rgba(245, 158, 11, 0.25);
+}
+
+.book-cover-mockup {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border-left: 5px solid #f59e0b;
+}
+
 /* PDF Printable / Export Styling */
 @media print {
     body {

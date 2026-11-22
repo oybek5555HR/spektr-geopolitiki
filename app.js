@@ -1222,6 +1222,190 @@ ${b.significance}
         return list;
     }
 
+    // View Mode State (books showcase vs authors grid)
+    let currentLibraryView = "books"; // "books" or "authors"
+
+    function setupLibraryViewSwitcher() {
+        const viewBooksBtn = document.getElementById("viewBooksBtn");
+        const viewAuthorsBtn = document.getElementById("viewAuthorsBtn");
+        const booksGrid = document.getElementById("booksGrid");
+        const authorsGrid = document.getElementById("authorsGrid");
+
+        if (!viewBooksBtn || !viewAuthorsBtn || !booksGrid || !authorsGrid) return;
+
+        viewBooksBtn.addEventListener("click", () => {
+            playSound("click");
+            currentLibraryView = "books";
+            booksGrid.classList.remove("hidden");
+            authorsGrid.classList.add("hidden");
+
+            viewBooksBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-500 text-slate-950 shadow-md flex items-center gap-1.5";
+            viewAuthorsBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-1.5";
+        });
+
+        viewAuthorsBtn.addEventListener("click", () => {
+            playSound("click");
+            currentLibraryView = "authors";
+            booksGrid.classList.add("hidden");
+            authorsGrid.classList.remove("hidden");
+
+            viewAuthorsBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-500 text-slate-950 shadow-md flex items-center gap-1.5";
+            viewBooksBtn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white flex items-center gap-1.5";
+        });
+    }
+
+    function renderBooksShowcase(authors) {
+        const booksGrid = document.getElementById("booksGrid");
+        if (!booksGrid) return;
+
+        let allBooks = [];
+        authors.forEach(author => {
+            const schoolObj = GEOPOLITICS_DATA.schools.find(s => s.id === author.school) || {};
+            author.books.forEach((b, bIdx) => {
+                const bKey = `${author.id}-${bIdx + 1}`;
+                const bStats = getBookStats(bKey);
+                allBooks.push({
+                    author,
+                    schoolObj,
+                    book: b,
+                    bIdx,
+                    bKey,
+                    stats: bStats
+                });
+            });
+        });
+
+        // Apply sort
+        const sortMode = sortSelect ? sortSelect.value : "chronological";
+        if (sortMode === "popular") {
+            allBooks.sort((a, b) => b.stats.views - a.stats.views);
+        } else if (sortMode === "downloads") {
+            allBooks.sort((a, b) => b.stats.downloads - a.stats.downloads);
+        } else if (sortMode === "alpha") {
+            allBooks.sort((a, b) => a.book.title.localeCompare(b.book.title, 'ru'));
+        }
+
+        if (allBooks.length === 0) {
+            booksGrid.innerHTML = `
+                <div class="col-span-full py-16 text-center glass-panel rounded-2xl border-dashed border-slate-700">
+                    <i class="fa-solid fa-book-open text-slate-600 text-3xl mb-3"></i>
+                    <p class="text-sm text-slate-400">По выбранным фильтрам книги не найдены.</p>
+                </div>
+            `;
+            return;
+        }
+
+        booksGrid.innerHTML = allBooks.map(item => {
+            const { author, schoolObj, book, bIdx, bKey, stats } = item;
+            const isFav = favoriteBooks.includes(bKey);
+
+            return `
+                <div class="book-showcase-card glass-panel rounded-2xl border border-slate-800 bg-slate-900/80 overflow-hidden flex flex-col justify-between group shadow-xl">
+                    
+                    <!-- Book Header Banner with Spine Styling -->
+                    <div class="book-cover-mockup p-5 border-b border-slate-800/80 relative">
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${schoolObj.badge || 'border-amber-500/30 text-amber-300 bg-amber-500/10'}">
+                                ${schoolObj.name || author.school.toUpperCase()}
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[11px] font-mono text-amber-400 font-bold bg-slate-950/80 px-2 py-0.5 rounded border border-amber-500/20">
+                                    ${book.year} г.
+                                </span>
+                                <button onclick="window.toggleFavorite('${bKey}', event)" title="${isFav ? 'В избранном' : 'Добавить в избранное'}" class="text-sm ${isFav ? 'text-amber-400' : 'text-slate-500 hover:text-amber-400'} transition-colors p-1">
+                                    <i class="fa-${isFav ? 'solid' : 'regular'} fa-star"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Big Book Title -->
+                        <h3 class="text-lg font-extrabold font-serif-title text-white group-hover:text-amber-400 transition-colors leading-snug mb-1">
+                            ${book.title}
+                        </h3>
+                        <div class="text-[11px] text-slate-400 italic mb-3">
+                            ${book.titleOrig}
+                        </div>
+
+                        <!-- Author Pill -->
+                        <div class="inline-flex items-center gap-2 bg-slate-950/70 border border-slate-800 px-2.5 py-1 rounded-lg">
+                            <div class="w-5 h-5 rounded-md bg-amber-500 text-slate-950 font-bold text-[10px] flex items-center justify-center font-mono">
+                                ${author.avatar}
+                            </div>
+                            <span class="text-xs font-semibold text-slate-200">${author.name}</span>
+                            <span class="text-[10px] text-slate-500 font-mono">(${author.years})</span>
+                        </div>
+                    </div>
+
+                    <!-- Book Body Content -->
+                    <div class="p-5 flex-grow flex flex-col justify-between">
+                        <div>
+                            <!-- Description -->
+                            <p class="text-xs text-slate-300 leading-relaxed mb-4 line-clamp-3">
+                                ${book.description}
+                            </p>
+
+                            <!-- Key Thesis Highlight -->
+                            ${book.keyPoints && book.keyPoints[0] ? `
+                                <div class="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 mb-4">
+                                    <div class="text-[9px] uppercase font-bold tracking-wider text-amber-500/90 mb-1 flex items-center gap-1">
+                                        <i class="fa-solid fa-quote-left text-[8px]"></i> Ключевой тезис:
+                                    </div>
+                                    <div class="text-xs text-slate-300 line-clamp-2 italic">
+                                        «${book.keyPoints[0]}»
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div>
+                            <!-- Views & Downloads Counter -->
+                            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 mb-4 pt-3 border-t border-slate-800/80">
+                                <span class="flex items-center gap-1.5 text-slate-300" title="Просмотры">
+                                    <i class="fa-solid fa-eye text-amber-400"></i> ${formatNumber(stats.views)}
+                                </span>
+                                <span class="flex items-center gap-1.5 text-slate-300" title="Скачано">
+                                    <i class="fa-solid fa-download text-emerald-400"></i> ${formatNumber(stats.downloads)}
+                                </span>
+                                <span class="text-slate-500">${author.country}</span>
+                            </div>
+
+                            <!-- 3 BIG PROMINENT 1-CLICK DOWNLOAD BUTTONS -->
+                            <div class="grid grid-cols-3 gap-2 mb-2">
+                                <button onclick="window.downloadBookSummary('${author.id}', ${bIdx}, 'txt')" 
+                                        class="py-2.5 px-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-md shadow-amber-500/10 hover:shadow-amber-500/30"
+                                        title="Скачать полный труд в формате TXT">
+                                    <i class="fa-solid fa-file-lines text-slate-950"></i>
+                                    <span>TXT</span>
+                                </button>
+
+                                <button onclick="window.downloadBookSummary('${author.id}', ${bIdx}, 'md')" 
+                                        class="py-2.5 px-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-blue-300 hover:text-white border border-slate-700 hover:border-blue-400 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all"
+                                        title="Скачать в формате Markdown (Obsidian / Notion)">
+                                    <i class="fa-brands fa-markdown text-blue-400"></i>
+                                    <span>MD</span>
+                                </button>
+
+                                <button onclick="window.exportBookToPdf('${author.id}', ${bIdx})" 
+                                        class="py-2.5 px-2 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-md shadow-emerald-900/30"
+                                        title="Экспорт конспекта книги в PDF на фирменном бланке">
+                                    <i class="fa-solid fa-file-pdf"></i>
+                                    <span>PDF</span>
+                                </button>
+                            </div>
+
+                            <!-- Read Online Modal Button -->
+                            <button onclick="window.openAuthorModal('${author.id}')" 
+                                    class="w-full py-1.5 rounded-lg bg-slate-950/70 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-amber-300 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors">
+                                <i class="fa-solid fa-book-open text-[10px]"></i>
+                                <span>Читать онлайн & Конспект</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+
     function renderAuthors() {
         const authors = getFilteredAuthors();
         
@@ -1229,13 +1413,19 @@ ${b.significance}
         const totalBooks = authors.reduce((sum, a) => sum + a.books.length, 0);
         booksCountEl.textContent = totalBooks;
 
+        const booksGrid = document.getElementById("booksGrid");
+
         if (authors.length === 0) {
             authorsGrid.innerHTML = "";
+            if (booksGrid) booksGrid.innerHTML = "";
             noResultsEl.classList.remove("hidden");
             return;
         } else {
             noResultsEl.classList.add("hidden");
         }
+
+        // Render both views
+        renderBooksShowcase(authors);
 
         authorsGrid.innerHTML = authors.map(author => {
             const schoolObj = GEOPOLITICS_DATA.schools.find(s => s.id === author.school) || {};
@@ -2080,6 +2270,7 @@ ${b.significance}
 
     // ==================== 20. ИНИЦИАЛИЗАЦИЯ ВСЕХ МОДУЛЕЙ ====================
     syncStatsFromServer();
+    setupLibraryViewSwitcher();
     initFilters();
     renderAuthors();
     renderForums();

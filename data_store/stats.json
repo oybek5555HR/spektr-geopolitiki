@@ -1,6 +1,6 @@
 {
   "totalViews": 148920,
-  "totalDownloads": 38422,
+  "totalDownloads": 38424,
   "todayViews": 2430,
   "onlineUsers": 38,
   "books": {
@@ -59,6 +59,14 @@
     "dugin-1": {
       "views": 6720,
       "downloads": 2210
+    },
+    "ratzel-3": {
+      "views": 1,
+      "downloads": 1
+    },
+    "haushofer-3": {
+      "views": 1,
+      "downloads": 1
     }
   }
 }
