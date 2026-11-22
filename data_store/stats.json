@@ -1,13 +1,29 @@
 {
-  "totalViews": 24,
+  "totalViews": 25,
   "totalDownloads": 5,
-  "todayViews": 24,
+  "todayViews": 25,
   "onlineUsers": 1,
   "lastDate": "2026-11-22",
   "books": {
-    "ratzel-1": { "views": 4, "downloads": 2 },
-    "ratzel-2": { "views": 2, "downloads": 1 },
-    "haushofer-1": { "views": 3, "downloads": 1 },
-    "mackinder-1": { "views": 5, "downloads": 1 }
+    "ratzel-1": {
+      "views": 4,
+      "downloads": 2
+    },
+    "ratzel-2": {
+      "views": 2,
+      "downloads": 1
+    },
+    "haushofer-1": {
+      "views": 3,
+      "downloads": 1
+    },
+    "mackinder-1": {
+      "views": 5,
+      "downloads": 1
+    },
+    "kjellen-1": {
+      "views": 1,
+      "downloads": 0
+    }
   }
 }

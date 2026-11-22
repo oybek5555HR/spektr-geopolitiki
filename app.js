@@ -1199,7 +1199,9 @@ ${b.significance}
         if (searchQuery.trim() !== "") {
             const q = searchQuery.toLowerCase().trim();
             list = list.filter(a => {
-                const inAuthor = a.name.toLowerCase().includes(q) || 
+                const inAuthor = (a.fullName && a.fullName.toLowerCase().includes(q)) ||
+                                 (a.fullNameOrig && a.fullNameOrig.toLowerCase().includes(q)) ||
+                                 a.name.toLowerCase().includes(q) || 
                                  a.nameOrig.toLowerCase().includes(q) || 
                                  a.country.toLowerCase().includes(q) ||
                                  a.role.toLowerCase().includes(q) ||
@@ -1345,13 +1347,19 @@ ${b.significance}
                             ${book.titleOrig}
                         </div>
 
-                        <!-- Author Pill -->
-                        <div class="inline-flex items-center gap-2 bg-slate-950/70 border border-slate-800 px-2.5 py-1 rounded-lg">
-                            <div class="w-5 h-5 rounded-md bg-amber-500 text-slate-950 font-bold text-[10px] flex items-center justify-center font-mono">
-                                ${author.avatar}
+                        <!-- Author Pill with Portrait -->
+                        <div class="inline-flex items-center gap-2.5 bg-slate-950/80 border border-amber-500/30 px-3 py-1.5 rounded-xl hover:border-amber-400 transition-colors shadow-sm">
+                            <div class="w-8 h-8 rounded-lg overflow-hidden border border-amber-400/50 shrink-0 bg-slate-900">
+                                <img src="${author.photo || ('assets/authors/' + author.id + '.jpg')}" 
+                                     alt="${author.fullName || author.name}" 
+                                     loading="lazy"
+                                     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=' + encodeURIComponent('${author.fullName || author.name}') + '&background=b45309&color=fff&size=100';"
+                                     class="w-full h-full object-cover object-top">
                             </div>
-                            <span class="text-xs font-semibold text-slate-200">${author.name}</span>
-                            <span class="text-[10px] text-slate-500 font-mono">(${author.years})</span>
+                            <div>
+                                <span class="text-xs font-bold text-slate-200 block leading-tight">${author.fullName || author.name}</span>
+                                <span class="text-[10px] text-amber-400/80 font-mono">(${author.years})</span>
+                            </div>
                         </div>
                     </div>
 
@@ -1456,20 +1464,30 @@ ${b.significance}
             return `
                 <div class="glass-panel p-6 rounded-2xl flex flex-col justify-between book-card animate-fade-in border border-amber-500/20 hover:border-amber-500/60 group">
                     <div>
-                        <!-- Header: Avatar + Meta -->
-                        <div class="flex items-start justify-between gap-4 mb-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-600 to-amber-900 border border-amber-400/30 flex items-center justify-center font-serif-title font-bold text-amber-100 text-lg shadow-md group-hover:scale-105 transition-transform">
-                                    ${author.avatar}
-                                </div>
-                                <div>
-                                    <h3 class="text-lg font-bold text-white group-hover:text-amber-400 transition-colors font-serif-title">${author.name}</h3>
-                                    <div class="text-xs text-slate-400">${author.nameOrig} • <span class="text-amber-400/90">${author.years}</span></div>
-                                </div>
+                        <!-- Header: Standardized Colored Portrait (Identical Size) + Full Name -->
+                        <div class="flex items-start gap-4 mb-4">
+                            <!-- Standardized Portrait Frame (w-24 h-28) -->
+                            <div class="relative w-24 h-28 shrink-0 rounded-2xl overflow-hidden border-2 border-amber-500/40 shadow-lg shadow-amber-950/50 group-hover:border-amber-400 group-hover:shadow-amber-500/20 transition-all bg-slate-900">
+                                <img src="${author.photo || ('assets/authors/' + author.id + '.jpg')}" 
+                                     alt="${author.fullName || author.name}" 
+                                     loading="lazy"
+                                     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=' + encodeURIComponent('${author.fullName || author.name}') + '&background=b45309&color=fff&size=200';"
+                                     class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-300">
+                                <div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent pointer-events-none"></div>
                             </div>
-                            <span class="px-2 py-0.5 text-[11px] rounded border ${schoolObj.badge || 'border-slate-700 text-slate-400'} whitespace-nowrap">
-                                ${author.country}
-                            </span>
+
+                            <div class="flex-grow min-w-0">
+                                <div class="flex items-center justify-between gap-1 mb-1">
+                                    <span class="px-2 py-0.5 text-[10px] font-bold rounded border ${schoolObj.badge || 'border-slate-700 text-slate-400'} whitespace-nowrap">
+                                        ${author.country}
+                                    </span>
+                                </div>
+                                <h3 class="text-base sm:text-lg font-bold text-white group-hover:text-amber-400 transition-colors font-serif-title leading-snug">
+                                    ${author.fullName || author.name}
+                                </h3>
+                                <div class="text-xs text-slate-400 font-medium mt-0.5 truncate">${author.fullNameOrig || author.nameOrig}</div>
+                                <div class="text-[11px] text-amber-400/90 font-mono mt-0.5 font-semibold">${author.years}</div>
+                            </div>
                         </div>
 
                         <!-- Stats Badge: Views & Downloads for Author -->
@@ -1576,22 +1594,27 @@ ${b.significance}
 
         modalContent.innerHTML = `
             <div class="space-y-6">
-                <!-- Modal Header -->
-                <div class="flex items-start gap-4 pb-4 border-b border-slate-800">
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-slate-950 font-serif-title font-bold text-2xl shadow-lg shadow-amber-500/20">
-                        ${author.avatar}
+                <!-- Modal Header: Standardized Colored Portrait + Full Name -->
+                <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5 pb-5 border-b border-slate-800">
+                    <!-- Standardized Portrait Frame (w-32 h-36) -->
+                    <div class="relative w-32 h-36 shrink-0 rounded-2xl overflow-hidden border-2 border-amber-400 shadow-xl shadow-amber-950/60 bg-slate-900">
+                        <img src="${author.photo || ('assets/authors/' + author.id + '.jpg')}" 
+                             alt="${author.fullName || author.name}" 
+                             onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=' + encodeURIComponent('${author.fullName || author.name}') + '&background=b45309&color=fff&size=250';"
+                             class="w-full h-full object-cover object-top">
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/40 via-transparent to-transparent pointer-events-none"></div>
                     </div>
-                    <div class="flex-grow">
-                        <div class="flex items-center justify-between gap-2 flex-wrap">
-                            <div class="flex items-center gap-2">
-                                <h2 class="text-2xl font-bold font-serif-title text-white">${author.name}</h2>
-                                <span class="text-sm text-slate-400">(${author.nameOrig})</span>
+                    <div class="flex-grow text-center sm:text-left">
+                        <div class="flex items-center justify-center sm:justify-between gap-2 flex-wrap">
+                            <div>
+                                <h2 class="text-2xl sm:text-3xl font-extrabold font-serif-title text-white gold-text leading-tight">${author.fullName || author.name}</h2>
+                                <div class="text-sm text-slate-400 font-medium">(${author.fullNameOrig || author.nameOrig})</div>
                             </div>
                         </div>
-                        <div class="text-xs text-amber-400 font-semibold mt-1">
+                        <div class="text-xs text-amber-400 font-semibold mt-2">
                             ${author.country} • ${author.years} • ${schoolObj.name || ''}
                         </div>
-                        <p class="text-xs text-slate-300 mt-1">${author.role}</p>
+                        <p class="text-xs text-slate-300 mt-2 leading-relaxed max-w-2xl">${author.role}</p>
                     </div>
                 </div>
 
