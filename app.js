@@ -1239,6 +1239,7 @@ ${b.significance}
 
         return list;
     }
+    window.getFilteredAuthors = getFilteredAuthors;
 
     // View Mode State (books showcase vs authors grid)
     let currentLibraryView = "books"; // "books" or "authors"
@@ -1415,7 +1416,7 @@ ${b.significance}
                             <button onclick="window.openAuthorModal('${author.id}')" 
                                     class="w-full py-1.5 rounded-lg bg-slate-950/70 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-amber-300 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors">
                                 <i class="fa-solid fa-book-open text-[10px]"></i>
-                                <span>Читать онлайн & Конспект</span>
+                                <span>${window.SpektrI18n ? SpektrI18n.get('card_btn_read', 'Читать онлайн & Конспект') : 'Читать онлайн & Конспект'}</span>
                             </button>
                         </div>
                     </div>
@@ -1423,6 +1424,7 @@ ${b.significance}
             `;
         }).join("");
     }
+    window.renderBooksShowcase = renderBooksShowcase;
 
     function renderAuthors() {
         const authors = getFilteredAuthors();
@@ -1560,6 +1562,7 @@ ${b.significance}
             `;
         }).join("");
     }
+    window.renderAuthors = renderAuthors;
 
     // ==================== 13. МОДАЛЬНОЕ ОКНО АВТОРА И КНИГ ====================
     window.openAuthorModal = function(authorId) {
