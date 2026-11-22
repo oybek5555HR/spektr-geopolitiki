@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://oybek5555hr.github.io/spektr-geopolitiki/sitemap.xml

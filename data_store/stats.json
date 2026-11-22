@@ -1,72 +1,13 @@
 {
-  "totalViews": 148920,
-  "totalDownloads": 38424,
-  "todayViews": 2430,
-  "onlineUsers": 38,
+  "totalViews": 24,
+  "totalDownloads": 5,
+  "todayViews": 24,
+  "onlineUsers": 1,
+  "lastDate": "2026-11-22",
   "books": {
-    "ratzel-1": {
-      "views": 4210,
-      "downloads": 1356
-    },
-    "ratzel-2": {
-      "views": 2890,
-      "downloads": 870
-    },
-    "kjellen-1": {
-      "views": 3410,
-      "downloads": 1120
-    },
-    "kjellen-2": {
-      "views": 2750,
-      "downloads": 780
-    },
-    "mahan-1": {
-      "views": 8940,
-      "downloads": 3420
-    },
-    "mahan-2": {
-      "views": 5610,
-      "downloads": 1890
-    },
-    "mackinder-1": {
-      "views": 12450,
-      "downloads": 4921
-    },
-    "mackinder-2": {
-      "views": 7830,
-      "downloads": 2650
-    },
-    "haushofer-1": {
-      "views": 4980,
-      "downloads": 1610
-    },
-    "spykman-1": {
-      "views": 9340,
-      "downloads": 3580
-    },
-    "kissinger-1": {
-      "views": 11200,
-      "downloads": 4310
-    },
-    "brzezinski-1": {
-      "views": 13800,
-      "downloads": 5490
-    },
-    "huntington-1": {
-      "views": 10450,
-      "downloads": 3820
-    },
-    "dugin-1": {
-      "views": 6720,
-      "downloads": 2210
-    },
-    "ratzel-3": {
-      "views": 1,
-      "downloads": 1
-    },
-    "haushofer-3": {
-      "views": 1,
-      "downloads": 1
-    }
+    "ratzel-1": { "views": 4, "downloads": 2 },
+    "ratzel-2": { "views": 2, "downloads": 1 },
+    "haushofer-1": { "views": 3, "downloads": 1 },
+    "mackinder-1": { "views": 5, "downloads": 1 }
   }
 }

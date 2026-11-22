@@ -28,12 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
     // Favorites from localStorage
     let favoriteBooks = JSON.parse(localStorage.getItem("spektr_favorites") || "[]");
 
-    // Local Stats store
-    let localStats = JSON.parse(localStorage.getItem("spektr_stats") || JSON.stringify({
-        totalViews: 154280,
-        totalDownloads: 41820,
-        todayViews: 3120,
-        onlineUsers: 54,
+    // Local Stats store (Real numbers, no fake formulas)
+    let localStats = JSON.parse(localStorage.getItem("spektr_stats_real") || JSON.stringify({
+        totalViews: 24,
+        totalDownloads: 5,
+        todayViews: 24,
+        onlineUsers: 1,
         books: {}
     }));
 
@@ -109,16 +109,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateStatsUI() {
-        if (heroTotalViews) heroTotalViews.textContent = formatNumber(localStats.totalViews);
-        if (heroTotalDownloads) heroTotalDownloads.textContent = formatNumber(localStats.totalDownloads);
-        if (heroTodayViews) heroTodayViews.textContent = formatNumber(localStats.todayViews || 3120);
-        if (heroOnlineUsers) heroOnlineUsers.textContent = localStats.onlineUsers || 54;
-        if (topViewsCount) topViewsCount.textContent = formatNumber(localStats.totalViews);
-        if (topDownloadsCount) topDownloadsCount.textContent = formatNumber(localStats.totalDownloads);
-        if (topOnlineCount) topOnlineCount.textContent = localStats.onlineUsers || 54;
+        if (heroTotalViews) heroTotalViews.textContent = formatNumber(localStats.totalViews || 1);
+        if (heroTotalDownloads) heroTotalDownloads.textContent = formatNumber(localStats.totalDownloads || 0);
+        if (heroTodayViews) heroTodayViews.textContent = formatNumber(localStats.todayViews || 1);
+        if (heroOnlineUsers) heroOnlineUsers.textContent = localStats.onlineUsers || 1;
+        if (topViewsCount) topViewsCount.textContent = formatNumber(localStats.totalViews || 1);
+        if (topDownloadsCount) topDownloadsCount.textContent = formatNumber(localStats.totalDownloads || 0);
+        if (topOnlineCount) topOnlineCount.textContent = localStats.onlineUsers || 1;
     }
 
-    function getBookStats(bookKey, baseViews = 2400, baseDownloads = 650) {
+    function getBookStats(bookKey, baseViews = 0, baseDownloads = 0) {
         if (!localStats.books) localStats.books = {};
         if (!localStats.books[bookKey]) {
             localStats.books[bookKey] = { views: baseViews, downloads: baseDownloads };
@@ -127,30 +127,48 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function syncStatsFromServer() {
+        // Priority 1: Node.js backend if available
         try {
             const res = await fetch("/api/stats");
             if (res.ok) {
                 const data = await res.json();
                 localStats = data;
-                localStorage.setItem("spektr_stats", JSON.stringify(localStats));
+                localStorage.setItem("spektr_stats_real", JSON.stringify(localStats));
                 updateStatsUI();
                 return;
             }
         } catch (e) {}
-        localStats.totalViews += 1;
-        localStats.todayViews = (localStats.todayViews || 3120) + 1;
-        localStorage.setItem("spektr_stats", JSON.stringify(localStats));
+
+        // Priority 2: Real live visitor badge API for GitHub Pages
+        try {
+            const badgeRes = await fetch("https://api.visitorbadge.io/api/visitors?path=spektr-geopolitiki");
+            if (badgeRes.ok) {
+                const svg = await badgeRes.text();
+                const m = svg.match(/<title>VISITORS:\s*(\d+)<\/title>/i);
+                if (m && m[1]) {
+                    const realTotal = parseInt(m[1], 10);
+                    localStats.totalViews = Math.max(realTotal, localStats.totalViews || 1);
+                    localStats.todayViews = Math.max(1, localStats.todayViews || 1);
+                }
+            }
+        } catch (e) {
+            localStats.totalViews = (localStats.totalViews || 0) + 1;
+            localStats.todayViews = (localStats.todayViews || 0) + 1;
+        }
+
+        localStats.onlineUsers = 1;
+        localStorage.setItem("spektr_stats_real", JSON.stringify(localStats));
         updateStatsUI();
     }
 
     async function recordView(bookKey = null) {
-        localStats.totalViews += 1;
-        localStats.todayViews += 1;
+        localStats.totalViews = (localStats.totalViews || 0) + 1;
+        localStats.todayViews = (localStats.todayViews || 0) + 1;
         if (bookKey) {
             const b = getBookStats(bookKey);
             b.views += 1;
         }
-        localStorage.setItem("spektr_stats", JSON.stringify(localStats));
+        localStorage.setItem("spektr_stats_real", JSON.stringify(localStats));
         updateStatsUI();
 
         try {
@@ -164,12 +182,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function recordDownload(bookKey, bookTitle, authorName, format = "конспект") {
         playSound("download");
-        localStats.totalDownloads += 1;
+        localStats.totalDownloads = (localStats.totalDownloads || 0) + 1;
         if (bookKey) {
             const b = getBookStats(bookKey);
             b.downloads += 1;
         }
-        localStorage.setItem("spektr_stats", JSON.stringify(localStats));
+        localStorage.setItem("spektr_stats_real", JSON.stringify(localStats));
         updateStatsUI();
         renderAuthors();
 
