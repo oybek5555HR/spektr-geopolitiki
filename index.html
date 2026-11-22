@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Спектр геополитики — Фундаментальная библиотека, радар форумов, карта альянсов и ситуационный чат</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            700: '#b45309'
+                        },
+                        navy: {
+                            800: '#0f172a',
+                            900: '#0a0f1d',
+                            950: '#060a12'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf.js for professional PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#0a0f1d] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-slate-900">
+
+    <!-- Top Live Ticker / Geopolitical Monitor -->
+    <div class="bg-slate-950 border-b border-amber-500/20 py-1.5 px-4 text-[11px] font-mono text-slate-400 flex items-center justify-between z-50">
+        <div class="flex items-center gap-2 overflow-hidden flex-grow">
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-bold uppercase tracking-wider text-[10px] shrink-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping"></span> СВОДКА LIVE
+            </span>
+            <div class="ticker-wrap flex-grow">
+                <div class="ticker-content space-x-6 text-slate-300">
+                    <span>⚡ <strong>GPR Risk Index:</strong> 168.4 <span class="text-emerald-400">(+3.2%)</span></span>
+                    <span>🏛️ <strong>Форумы:</strong> Мюнхен (MSC) — спецсессия LIVE | Саммит БРИКС+ через 23 дня</span>
+                    <span>🛢️ <strong>Brent Crude:</strong> $82.40/bbl</span>
+                    <span>🥇 <strong>Gold:</strong> $2,735/oz</span>
+                    <span>⚡ <strong>Uranium U3O8:</strong> $84.50/lb</span>
+                    <span>⚓ <strong>Ормузский пролив:</strong> 21 млн барр./сут под контролем Ирана/Омана</span>
+                    <span>🚢 <strong>Баб-эль-Мандеб:</strong> Режим повышенного мониторинга транзита</span>
+                    <span>🌊 <strong>Малаккский пролив:</strong> Фарватер 25м, повышенная бдительность ВМС</span>
+                    <span>🌍 <strong>Мировой Остров:</strong> 54 активных аналитика в ситуационном центре</span>
+                </div>
+            </div>
+        </div>
+        <div class="hidden sm:flex items-center gap-4 shrink-0 pl-4 border-l border-slate-800 text-[11px]">
+            <span class="inline-flex items-center gap-1.5 text-emerald-400">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 glow-dot"></span>
+                В сети: <strong id="topOnlineCount" class="font-bold text-white">54</strong>
+            </span>
+            <span class="text-slate-400">
+                👁 <span id="topViewsCount" class="text-amber-400 font-bold">154,280</span>
+            </span>
+            <span class="text-slate-400">
+                📥 <span id="topDownloadsCount" class="text-emerald-400 font-bold">41,820</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Top Navigation -->
+    <header class="sticky top-0 z-40 border-b border-amber-500/20 bg-[#0a0f1d]/90 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="#" class="flex items-center space-x-3.5 group">
+                <div class="relative flex items-center justify-center p-1 rounded-2xl bg-slate-900/90 border border-amber-500/30 group-hover:border-amber-400 shadow-lg shadow-amber-500/10 transition-all">
+                    <div class="real-earth-globe" title="Земной шар: вращение слева направо"></div>
+                </div>
+                <div>
+                    <span class="block text-xl font-bold font-serif-title tracking-wider gold-text">СПЕКТР ГЕОПОЛИТИКИ</span>
+                    <span class="block text-xs uppercase tracking-widest text-slate-400">Мировая библиотека & Ситуационный центр</span>
+                </div>
+            </a>
+
+            <nav class="hidden xl:flex items-center space-x-5 text-sm font-medium text-slate-300">
+                <a href="#forums-section" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold">
+                    <i class="fa-solid fa-globe text-red-400"></i> Форумы
+                    <span class="px-1.5 py-0.2 text-[9px] bg-red-500/20 border border-red-500/50 text-red-300 rounded font-bold">LIVE</span>
+                </a>
+                <a href="#alliances-section" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold">
+                    <i class="fa-solid fa-shield-halved text-amber-500"></i> Альянсы
+                </a>
+                <a href="#regions-section" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold">
+                    <i class="fa-solid fa-chart-pie text-emerald-400"></i> Регионы
+                </a>
+                <a href="#library" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold">
+                    <i class="fa-solid fa-book-atlas text-blue-400"></i> Библиотека
+                </a>
+                <a href="#chat-section" class="hover:text-amber-400 transition-colors flex items-center gap-1.5 text-xs uppercase tracking-wider font-semibold relative">
+                    <i class="fa-solid fa-comments text-amber-400"></i> Чат
+                    <span id="navChatBadge" class="px-1.5 py-0.2 text-[9px] bg-amber-500 text-slate-950 font-bold rounded-full">6</span>
+                </a>
+            </nav>
+
+            <div class="flex items-center space-x-2 sm:space-x-3">
+                <!-- Sound Toggle -->
+                <button id="soundToggleBtn" title="Звуковые эффекты терминала" class="w-9 h-9 rounded-lg bg-slate-900 border border-slate-700/80 text-slate-300 hover:text-amber-400 hover:border-amber-500 flex items-center justify-center text-xs transition-colors">
+                    <i class="fa-solid fa-volume-high"></i>
+                </button>
+
+                <!-- Bookmarks filter toggle -->
+                <button id="favoritesFilterBtn" title="Моя библиотека (избранное)" class="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700/80 text-slate-300 hover:text-amber-400 hover:border-amber-500 text-xs font-semibold flex items-center gap-1.5 transition-colors">
+                    <i class="fa-solid fa-bookmark text-amber-400"></i>
+                    <span class="hidden sm:inline">Избранное</span>
+                    <span id="favCountBadge" class="px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 text-[10px]">0</span>
+                </button>
+
+                <!-- Quick Quiz button -->
+                <button id="openQuizBtn" class="px-3.5 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-slate-800 hover:bg-slate-700 text-purple-300 border border-purple-500/40 hover:border-purple-400 transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-brain text-purple-400"></i>
+                    <span class="hidden sm:inline">Тест</span>
+                </button>
+
+                <a href="#chat-section" class="px-3.5 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 hover:brightness-110 shadow-md shadow-amber-500/20 transition-all flex items-center gap-1.5 font-bold">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>В чат</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section with Radar Atmosphere & Live Metrics -->
+    <section class="relative pt-10 pb-14 overflow-hidden radar-grid border-b border-amber-500/15">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-300 text-xs font-medium uppercase tracking-widest mb-6 animate-pulse">
+                <span class="w-2 h-2 rounded-full bg-amber-400 glow-dot"></span>
+                Антология геостратегии • Радар мировых саммитов • Ситуационный чат
+            </div>
+
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-serif-title max-w-4xl mx-auto leading-tight mb-5">
+                География как судьба: <br class="hidden sm:inline">
+                <span class="gold-text">от классиков Хартленда</span> до саммитов XXI века
+            </h1>
+
+            <p class="max-w-3xl mx-auto text-base sm:text-lg text-slate-300 leading-relaxed mb-8">
+                Свод фундаментальной литературы, радар текущих и предстоящих геополитических форумов, интерактивная карта блоков и ситуационный чат исследователей с экспортом в PDF.
+            </p>
+
+            <!-- LIVE STAT COUNTERS -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
+                <div class="glass-panel p-4 rounded-xl text-center border-amber-500/40 relative overflow-hidden group">
+                    <div class="flex items-center justify-center gap-2 text-xs uppercase text-slate-400 tracking-wider mb-1">
+                        <i class="fa-solid fa-eye text-amber-400"></i> Всего просмотров
+                    </div>
+                    <div id="heroTotalViews" class="text-3xl font-extrabold gold-text font-serif-title counter-num">154 280</div>
+                    <div class="text-[11px] text-emerald-400 mt-1 font-mono">+<span id="heroTodayViews">3 120</span> за сегодня</div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-xl text-center border-emerald-500/30 relative overflow-hidden group">
+                    <div class="flex items-center justify-center gap-2 text-xs uppercase text-slate-400 tracking-wider mb-1">
+                        <i class="fa-solid fa-download text-emerald-400"></i> Скачано книг & PDF
+                    </div>
+                    <div id="heroTotalDownloads" class="text-3xl font-extrabold text-emerald-400 font-serif-title counter-num">41 820</div>
+                    <div class="text-[11px] text-slate-400 mt-1">конспектов & трудов</div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-xl text-center border-blue-500/30 relative overflow-hidden group">
+                    <div class="flex items-center justify-center gap-2 text-xs uppercase text-slate-400 tracking-wider mb-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> В сети онлайн
+                    </div>
+                    <div id="heroOnlineUsers" class="text-3xl font-extrabold text-blue-400 font-serif-title counter-num">54</div>
+                    <div class="text-[11px] text-slate-400 mt-1">исследователей онлайн</div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-xl text-center border-purple-500/30 relative overflow-hidden group">
+                    <div class="flex items-center justify-center gap-2 text-xs uppercase text-slate-400 tracking-wider mb-1">
+                        <i class="fa-solid fa-calendar-check text-purple-400"></i> Форумов в радаре
+                    </div>
+                    <div class="text-3xl font-extrabold text-purple-300 font-serif-title">6 саммитов</div>
+                    <div class="text-[11px] text-red-400 mt-1 font-bold">1 идёт прямо сейчас</div>
+                </div>
+            </div>
+
+            <!-- Quick Action Pills -->
+            <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
+                <a href="#forums-section" class="px-4 py-2 rounded-xl bg-red-500/20 border border-red-500/50 hover:bg-red-500/30 text-red-300 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-red-400 animate-ping"></span> Радар форумов (LIVE)
+                </a>
+                <a href="#alliances-section" class="px-4 py-2 rounded-xl bg-amber-500/20 border border-amber-500/50 hover:bg-amber-500/30 text-amber-300 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-amber-400"></i> Карта альянсов (БРИКС / НАТО)
+                </a>
+                <a href="#regions-section" class="px-4 py-2 rounded-xl bg-blue-500/20 border border-blue-500/50 hover:bg-blue-500/30 text-blue-300 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-compass text-blue-400"></i> Аналитика регионов
+                </a>
+                <a href="#library" class="px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/50 hover:bg-emerald-500/30 text-emerald-300 font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf text-emerald-400"></i> Книги & Экспорт PDF
+                </a>
+            </div>
+
+            <!-- Quote Carousel -->
+            <div class="max-w-3xl mx-auto glass-panel p-5 rounded-2xl relative border-amber-500/30">
+                <i class="fa-solid fa-quote-left text-amber-500/20 text-4xl absolute left-4 top-3"></i>
+                <div id="heroQuoteContainer" class="relative z-10">
+                    <p id="heroQuoteText" class="text-sm sm:text-base italic text-slate-200 mb-2 font-serif">
+                        «Кто правит Восточной Европой — тот командует Хартлендом; кто правит Хартлендом — тот командует Мировым Островом; кто правит Мировым Островом — тот командует миром.»
+                    </p>
+                    <div id="heroQuoteAuthor" class="text-xs font-semibold uppercase tracking-widest text-amber-400">
+                        Хэлфорд Джон Маккиндер — «Демократические идеалы и реальность» (1919)
+                    </div>
+                </div>
+                <div class="flex justify-center gap-2 mt-3">
+                    <button id="prevQuoteBtn" class="w-6 h-6 rounded-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-400 text-xs flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button id="nextQuoteBtn" class="w-6 h-6 rounded-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-400 text-xs flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 1: РАДАР ГЕОПОЛИТИЧЕСКИХ ФОРУМОВ И САММИТОВ (ТЕКУЩИЕ И БЛИЖАЙШИЕ) -->
+    <section id="forums-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-slate-800">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div>
+                <div class="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-red-400 font-bold mb-1">
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 live-beacon inline-block"></span>
+                    Мониторинг международных площадок принятия решений
+                </div>
+                <h2 class="text-3xl font-bold font-serif-title text-white">Геополитические форумы & Саммиты</h2>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                    Где прямо сейчас и в ближайшие месяцы решается судьба мирового порядка: от Мюнхена до саммитов БРИКС, ШОС и Давоса.
+                </p>
+            </div>
+
+            <!-- Forums Filter Tabs -->
+            <div class="flex flex-wrap gap-2" id="forumsFilterContainer">
+                <button data-filter="all" class="forum-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500 text-slate-950 border border-amber-400">
+                    Все форумы
+                </button>
+                <button data-filter="live" class="forum-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-red-400 border border-slate-800 hover:border-red-500/50 flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping"></span> Идут сейчас (LIVE)
+                </button>
+                <button data-filter="security" class="forum-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-800 hover:border-amber-500/50">
+                    Безопасность
+                </button>
+                <button data-filter="geoeconomics" class="forum-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-300 border border-slate-800 hover:border-amber-500/50">
+                    БРИКС & Евразия
+                </button>
+            </div>
+        </div>
+
+        <!-- Forums Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="forumsGrid">
+            <!-- Populated via JavaScript -->
+        </div>
+    </section>
+
+    <!-- SECTION 2: ИНТЕРАКТИВНАЯ КАРТА И ДАШБОРД МИРОВЫХ АЛЬЯНСОВ -->
+    <section id="alliances-section" class="border-b border-slate-800 bg-slate-950/60 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <span class="text-xs font-semibold uppercase tracking-widest text-amber-500 block mb-1">Многополярный баланс сил</span>
+                <h2 class="text-3xl font-bold font-serif-title gold-text">Интерактивный радар мировых альянсов</h2>
+                <p class="text-xs sm:text-sm text-slate-300 mt-2">
+                    Сравнение стратегических блоков: доля в мировом ВВП (ППС), население, запасы нефти, ядерные арсеналы и геополитические доктрины.
+                </p>
+            </div>
+
+            <!-- Alliance Selectors Bar -->
+            <div class="flex flex-wrap justify-center gap-2 mb-8" id="allianceSelectorBar">
+                <!-- Buttons injected via JS -->
+            </div>
+
+            <!-- Active Alliance Detailed Dashboard Card -->
+            <div id="allianceDetailCard" class="glass-panel p-6 sm:p-8 rounded-2xl border-amber-500/30">
+                <!-- Dynamically rendered -->
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: РАСШИРЕННАЯ АНАЛИТИКА ПО МАКРОРЕГИОНАМ -->
+    <section id="regions-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-slate-800">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div>
+                <span class="text-xs font-semibold uppercase tracking-widest text-emerald-400 mb-1 block">Стратегическая география XXI века</span>
+                <h2 class="text-3xl font-bold font-serif-title text-white">Расширенная аналитика по регионам мира</h2>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                    Ключевые геополитические узлы столкновения: Индо-Пацифика, Хартленд, Ближний Восток, Арктика и Глобальный Юг.
+                </p>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-slate-400 font-mono">
+                <i class="fa-solid fa-radar text-amber-400"></i> Индекс напряженности обновляется онлайн
+            </div>
+        </div>
+
+        <!-- Regions Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="regionsGrid">
+            <!-- Populated via JavaScript -->
+        </div>
+    </section>
+
+    <!-- Main Content Area: Library with Book Download and PDF Export -->
+    <main id="library" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-slate-800 flex-grow">
+        
+        <!-- Filter Bar Header -->
+        <div class="mb-10">
+            <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-slate-800">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-widest text-amber-500 mb-1 block">Каталог классиков, скачивание и печать</span>
+                    <h2 class="text-3xl font-bold font-serif-title text-white">Фундаментальная библиотека</h2>
+                    <p class="text-xs text-slate-400 mt-1">Каждый труд снабжен аналитическим конспектом с возможностью мгновенного экспорта в PDF или текстовый формат.</p>
+                </div>
+                
+                <!-- Live Search Box -->
+                <div class="w-full lg:w-96 relative">
+                    <input type="text" id="mainSearchInput" placeholder="Поиск автора, названия книги, тезиса..." 
+                           class="w-full bg-slate-900/90 border border-amber-500/30 rounded-xl px-4 py-2.5 pl-11 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-amber-400/70 text-sm"></i>
+                    <button id="clearSearchBtn" class="hidden absolute right-3 top-2.5 text-slate-400 hover:text-white text-xs bg-slate-800 px-2 py-1 rounded">
+                        Сброс
+                    </button>
+                </div>
+            </div>
+
+            <!-- Era Tabs Filter -->
+            <div class="mt-6 flex flex-wrap gap-2" id="eraFilterContainer">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <!-- School Pills Filter -->
+            <div class="mt-4 flex flex-wrap items-center gap-2" id="schoolFilterContainer">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+
+        <!-- Dynamic Results Counter -->
+        <div class="flex items-center justify-between text-xs text-slate-400 mb-6">
+            <div>
+                Найдено авторов: <span id="authorsCount" class="font-bold text-amber-400">0</span> | Книг в выборке: <span id="booksCount" class="font-bold text-amber-400">0</span>
+                <span id="activeFilterBadge" class="hidden ml-2 px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold"></span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span>Сортировка:</span>
+                <select id="sortSelect" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-300 text-xs focus:outline-none focus:border-amber-500">
+                    <option value="chronological">Хронологическая (от классиков к современникам)</option>
+                    <option value="popular">По популярности (просмотрам)</option>
+                    <option value="downloads">По количеству скачиваний</option>
+                    <option value="alpha">По имени автора (А-Я)</option>
+                    <option value="books">По числу трудов</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Authors Grid -->
+        <div id="authorsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Injected via JavaScript -->
+        </div>
+
+        <!-- No Results Fallback -->
+        <div id="noResults" class="hidden py-16 text-center">
+            <div class="w-16 h-16 rounded-full bg-slate-800 text-slate-500 flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-compass"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-200 mb-1">Ничего не найдено</h3>
+            <p class="text-sm text-slate-400 max-w-md mx-auto">Попробуйте изменить поисковый запрос или сбросить фильтры эпохи и школы.</p>
+            <button id="resetAllFiltersBtn" class="mt-4 px-4 py-2 bg-amber-500 text-slate-950 font-semibold text-xs rounded-lg uppercase tracking-wider hover:brightness-110">
+                Показать всех авторов
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Section 5: Interactive Geopolitical Concepts & Choke Points -->
+    <section id="concepts" class="border-b border-amber-500/20 bg-slate-950/60 py-16 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-xs font-semibold uppercase tracking-widest text-amber-500 block mb-2">Пространство и стратегия</span>
+                <h2 class="text-3xl font-bold font-serif-title gold-text">Ключевые геополитические концепции</h2>
+                <p class="text-sm text-slate-300 mt-2">
+                    Теоретические модели, определяющие расстановку сил на планете: противостояние Суши и Моря, контроль внутренних пространств и критические морские артерии (Choke Points).
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+                <!-- Concept 1: Heartland -->
+                <div class="glass-panel p-6 rounded-2xl border-blue-500/30 relative overflow-hidden">
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg mb-4">
+                        <i class="fa-solid fa-mountain"></i>
+                    </div>
+                    <span class="text-xs uppercase tracking-wider text-blue-400 font-bold block mb-1">Маккиндер (1904)</span>
+                    <h3 class="text-xl font-bold font-serif-title text-white mb-2">Хартленд (Heartland)</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                        Неприступная сердцевина Евразии, изолированная от морских флотов арктическими льдами и горными цепями. Срединная земля великих равнин, обладающая гигантскими ресурсами.
+                    </p>
+                    <div class="text-xs border-t border-slate-800 pt-3 text-slate-400">
+                        <strong class="text-slate-200">Главный императив:</strong> Не допустить союза сухопутной державы Хартленда с промышленным потенциалом Европы или Китая.
+                    </div>
+                </div>
+
+                <!-- Concept 2: Rimland -->
+                <div class="glass-panel p-6 rounded-2xl border-amber-500/30 relative overflow-hidden">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-lg mb-4">
+                        <i class="fa-solid fa-water"></i>
+                    </div>
+                    <span class="text-xs uppercase tracking-wider text-amber-400 font-bold block mb-1">Спайкмен (1942)</span>
+                    <h3 class="text-xl font-bold font-serif-title text-white mb-2">Римленд (Rimland)</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                        Окраинный прибрежный пояс Евразии (Европа, Ближний Восток, Индостан, Юго-Восточная Азия, Приморье Китая). Зона контакта суши и океана, где сосредоточена большая часть населения и технологий.
+                    </p>
+                    <div class="text-xs border-t border-slate-800 pt-3 text-slate-400">
+                        <strong class="text-slate-200">Главный императив:</strong> Контроль над прибрежной дугой обеспечивает гегемонию над всей Евразией и сдерживание континента.
+                    </div>
+                </div>
+
+                <!-- Concept 3: Tellurocracy vs Thalassocracy -->
+                <div class="glass-panel p-6 rounded-2xl border-red-500/30 relative overflow-hidden">
+                    <div class="w-10 h-10 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center text-lg mb-4">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                    </div>
+                    <span class="text-xs uppercase tracking-wider text-red-400 font-bold block mb-1">Мэхэн & Карл Шмитт</span>
+                    <h3 class="text-xl font-bold font-serif-title text-white mb-2">Суша против Моря</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                        Вечный метафизический дуализм Теллурократии (порядок, границы, оседлость, армия) и Талассократии (мобильность, торговля, гибкость, флот, финансовый капитал).
+                    </p>
+                    <div class="text-xs border-t border-slate-800 pt-3 text-slate-400">
+                        <strong class="text-slate-200">Главный императив:</strong> Борьба за мировые торговые пути против континентального автаркического порядка.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Choke Points Interactive Cards -->
+            <div class="glass-panel p-8 rounded-2xl border-amber-500/30">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-amber-400 font-bold mb-1">
+                            <span class="w-2.5 h-2.5 rounded-full bg-red-500 choke-ping inline-block"></span>
+                            Критические морские артерии (Choke Points)
+                        </div>
+                        <h3 class="text-2xl font-bold font-serif-title text-white">Стратегические проливы и каналы планеты</h3>
+                    </div>
+                    <span class="text-xs text-slate-400 max-w-sm">
+                        Нажмите на пролив, чтобы узнать его стратегическое значение и объем проходящего транзита:
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3" id="chokePointsGrid">
+                    <!-- Cards will be populated with JS -->
+                </div>
+
+                <div id="chokeDetailBox" class="mt-6 p-4 rounded-xl bg-slate-900/90 border border-slate-800 text-sm">
+                    <!-- Dynamic detail -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: СИТУАЦИОННЫЙ ЧАТ («ДИАЛОГОВОЕ ОКНО ГЕОПОЛИТИКОВ») С ТЕМАТИЧЕСКИМИ КАНАЛАМИ -->
+    <section id="chat-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div>
+                <div class="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-amber-400 font-bold mb-1">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 glow-dot"></span>
+                    Оперативный канал связи исследователей
+                </div>
+                <h2 class="text-3xl font-bold font-serif-title text-white">Диалоговое окно геополитиков: Живой чат по темам</h2>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                    Переключайтесь между оперативными каналами, обсуждайте саммиты, морские пути и советуйтесь с виртуальным стратегическим AI.
+                </p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs font-mono">
+                    <i class="fa-solid fa-circle text-[8px] animate-pulse"></i> 5 тематических каналов • Сохранение в реальном времени
+                </span>
+            </div>
+        </div>
+
+        <div class="glass-panel rounded-2xl border-amber-500/30 overflow-hidden shadow-2xl flex flex-col md:flex-row h-[660px]">
+            
+            <!-- Chat Sidebar: Profile & Thematic Channels -->
+            <div class="w-full md:w-80 bg-slate-950/80 border-b md:border-b-0 md:border-r border-slate-800 p-5 flex flex-col justify-between">
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-id-badge text-amber-500"></i> Ваш профиль:
+                    </h4>
+
+                    <!-- User Name Input -->
+                    <div class="mb-3">
+                        <label class="block text-[11px] text-slate-400 uppercase tracking-wider mb-1">Позывной / Имя:</label>
+                        <input type="text" id="chatUserName" value="Аналитик" 
+                               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+                    </div>
+
+                    <!-- Faction Selector -->
+                    <div class="mb-4">
+                        <label class="block text-[11px] text-slate-400 uppercase tracking-wider mb-1">Геополитическая фракция:</label>
+                        <select id="chatUserFaction" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-amber-300 font-medium focus:outline-none focus:border-amber-400">
+                            <option value="realist" data-avatar="⚖️" data-name="Школа Реализма">⚖️ Школа Реализма (Баланс сил)</option>
+                            <option value="russian" data-avatar="🐻" data-name="Хартленд">🐻 Евразийство (Хартленд)</option>
+                            <option value="anglo" data-avatar="⚓" data-name="Атлантист">⚓ Атлантизм (Sea Power / Римленд)</option>
+                            <option value="asian" data-avatar="🐉" data-name="Восточная школа">🐉 Восточная школа (Сунь-Цзы)</option>
+                            <option value="french" data-avatar="🌿" data-name="Поссибилизм">🌿 Поссибилизм (Французская школа)</option>
+                        </select>
+                    </div>
+
+                    <!-- 5 Thematic Channels -->
+                    <div class="mb-3">
+                        <span class="block text-[10px] uppercase tracking-wider text-slate-400 font-bold mb-2">Оперативные каналы чата:</span>
+                        <div class="space-y-1.5" id="chatChannelTabs">
+                            <button data-channel="general" class="chat-ch-btn w-full text-left px-3 py-2 rounded-lg bg-amber-500/20 border border-amber-500/50 text-amber-300 text-xs font-semibold flex items-center justify-between transition-all">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-tower-broadcast text-[11px]"></i> #общий-канал</span>
+                                <span class="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/30 text-amber-200">ВСЕ</span>
+                            </button>
+                            <button data-channel="forums" class="chat-ch-btn w-full text-left px-3 py-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-400 text-xs font-medium hover:text-white transition-all flex items-center justify-between">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-globe text-[11px] text-red-400"></i> #форумы-и-саммиты</span>
+                                <span class="text-[9px] px-1.5 py-0.2 rounded bg-red-500/20 text-red-300">LIVE</span>
+                            </button>
+                            <button data-channel="pacific" class="chat-ch-btn w-full text-left px-3 py-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-400 text-xs font-medium hover:text-white transition-all flex items-center justify-between">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-water text-[11px] text-cyan-400"></i> #индо-тихий-океан</span>
+                                <span class="text-[9px] text-slate-500">ИТР</span>
+                            </button>
+                            <button data-channel="energy" class="chat-ch-btn w-full text-left px-3 py-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-400 text-xs font-medium hover:text-white transition-all flex items-center justify-between">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-gas-pump text-[11px] text-yellow-400"></i> #энергетические-войны</span>
+                                <span class="text-[9px] text-slate-500">Нефть/Газ</span>
+                            </button>
+                            <button data-channel="heartland" class="chat-ch-btn w-full text-left px-3 py-2 rounded-lg bg-slate-900/80 border border-slate-800 text-slate-400 text-xs font-medium hover:text-white transition-all flex items-center justify-between">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-mountain text-[11px] text-red-400"></i> #теория-хартленда</span>
+                                <span class="text-[9px] text-slate-500">Теория</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Strategic Helper button -->
+                <div class="pt-3 border-t border-slate-800">
+                    <button id="askAiStrategistBtn" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-purple-900/60 to-indigo-900/60 border border-purple-500/40 hover:border-purple-400 text-purple-200 text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-md">
+                        <i class="fa-solid fa-robot text-purple-400"></i> Спросить AI-советника
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat Main Area -->
+            <div class="flex-grow flex flex-col bg-slate-900/40">
+                <!-- Channel Title Header -->
+                <div class="px-5 py-2.5 bg-slate-950/90 border-b border-slate-800 flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="text-amber-400 font-bold" id="currentChatChannelTitle">#общий-канал</span>
+                        <span class="text-[11px] text-slate-400" id="currentChatChannelDesc">Глобальная повестка и дискуссии аналитиков</span>
+                    </div>
+                    <span class="text-[10px] text-slate-500 font-mono">Сообщения сохраняются</span>
+                </div>
+
+                <!-- Messages Box -->
+                <div id="chatMessagesContainer" class="flex-grow p-4 sm:p-6 overflow-y-auto space-y-4">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Chat Input Form -->
+                <div class="p-3 sm:p-4 bg-slate-950/90 border-t border-slate-800">
+                    <form id="chatForm" class="flex items-center gap-2">
+                        <!-- Quick emoji shortcuts -->
+                        <div class="hidden sm:flex items-center gap-1">
+                            <button type="button" class="chat-emoji-btn w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-sm flex items-center justify-center" data-emoji="⚓">⚓</button>
+                            <button type="button" class="chat-emoji-btn w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-sm flex items-center justify-center" data-emoji="🐻">🐻</button>
+                            <button type="button" class="chat-emoji-btn w-8 h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-sm flex items-center justify-center" data-emoji="🌍">🌍</button>
+                        </div>
+                        <input type="text" id="chatMessageInput" placeholder="Введите ваше аналитическое сообщение по теме..." 
+                               class="flex-grow bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-xs sm:text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-amber-400 transition-all">
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:brightness-110 text-slate-950 font-bold text-xs uppercase tracking-wider flex items-center gap-2 shadow-md transition-all shrink-0">
+                            <span class="hidden sm:inline">Отправить</span>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Section 7: Geopolitics Glossary -->
+    <section id="glossary" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-t border-slate-800/80">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+            <div>
+                <span class="text-xs font-semibold uppercase tracking-widest text-amber-500 mb-1 block">Тезаурус и понятийный аппарат</span>
+                <h2 class="text-3xl font-bold font-serif-title text-white">Словарь ключевых терминов</h2>
+            </div>
+            <div class="w-full md:w-72">
+                <input type="text" id="glossarySearchInput" placeholder="Поиск по терминам..." 
+                       class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-amber-500">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="glossaryGrid">
+            <!-- Injected via JavaScript -->
+        </div>
+    </section>
+
+    <!-- Modal: Interactive Quiz «Какая вы геополитическая школа?» -->
+    <div id="quizModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden animate-fade-in">
+        <div class="glass-panel bg-[#0d1527] border border-amber-500/40 rounded-2xl max-w-xl w-full p-6 sm:p-8 relative shadow-2xl">
+            <button id="closeQuizBtn" class="absolute top-5 right-5 text-slate-400 hover:text-white text-xl w-8 h-8 rounded-full bg-slate-800/80 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="quizContainer">
+                <div class="text-center mb-6">
+                    <span class="text-xs font-bold uppercase tracking-widest text-amber-400">Интерактивный тест</span>
+                    <h3 class="text-2xl font-bold font-serif-title text-white mt-1">К какой школе геополитики вы принадлежите?</h3>
+                    <p class="text-xs text-slate-300 mt-2">Ответьте на 4 вопроса, чтобы определить вашу стратегическую доктрину и получить персональный список книг.</p>
+                </div>
+                <div id="quizContent">
+                    <!-- Steps populated via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Book / Author Modal with TXT and PDF Export -->
+    <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden animate-fade-in">
+        <div class="glass-panel bg-[#0d1527] border border-amber-500/40 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative shadow-2xl">
+            <button id="closeModalBtn" class="absolute top-5 right-5 text-slate-400 hover:text-white text-xl w-8 h-8 rounded-full bg-slate-800/80 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modalContent">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Printable Academic Container for PDF Generation (positioned offscreen so html2canvas can measure and render) -->
+    <div id="pdfExportContainer" style="position: fixed; left: -9999px; top: 0; width: 794px; background: #ffffff; z-index: -100; pointer-events: none;"></div>
+
+    <!-- Floating Chat Button (Bottom Right) -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button id="toggleFloatingChatBtn" class="w-14 h-14 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-bold text-xl shadow-xl shadow-amber-500/30 hover:scale-105 transition-all flex items-center justify-center relative group">
+            <i class="fa-solid fa-comments"></i>
+            <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold" id="floatingChatBadge">6</span>
+        </button>
+    </div>
+
+    <!-- Toast Notification (Bottom Center) -->
+    <div id="toastBox" class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-xl bg-slate-900 border border-emerald-500/50 text-emerald-300 text-xs sm:text-sm font-semibold shadow-2xl flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toastMessage">Книга успешно скачана! Статистика обновлена (+1).</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800/80 bg-[#060a12] py-12 text-sm text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center space-x-3 group">
+                    <div class="relative flex items-center justify-center p-1 rounded-xl bg-slate-900 border border-slate-700 group-hover:border-amber-400 transition-all">
+                        <div class="real-earth-globe globe-small"></div>
+                    </div>
+                    <div>
+                        <div class="font-bold text-white font-serif-title">СПЕКТР ГЕОПОЛИТИКИ</div>
+                        <div class="text-xs text-slate-500">Электронная антология мировой стратегической мысли & Ситуационный центр</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-6 text-xs text-slate-400">
+                    <a href="#forums-section" class="hover:text-amber-400 transition-colors">Радар форумов</a>
+                    <a href="#alliances-section" class="hover:text-amber-400 transition-colors">Карта альянсов</a>
+                    <a href="#regions-section" class="hover:text-amber-400 transition-colors">Регионы</a>
+                    <a href="#library" class="hover:text-amber-400 transition-colors">Библиотека</a>
+                    <a href="#chat-section" class="hover:text-amber-400 transition-colors">Чат аналитиков</a>
+                </div>
+
+                <div class="text-xs text-slate-500 text-center md:text-right">
+                    © 2026 Портал «Спектр геополитики». Все права сохранены.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

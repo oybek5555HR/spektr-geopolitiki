@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 150" width="600" height="150">
+  <defs>
+    <!-- Deep Photorealistic Ocean Gradient -->
+    <linearGradient id="oceanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#071b30"/>
+      <stop offset="25%" stop-color="#0b2c52"/>
+      <stop offset="60%" stop-color="#0e3d70"/>
+      <stop offset="100%" stop-color="#051527"/>
+    </linearGradient>
+
+    <!-- Continental Vegetation & Desert Gradients -->
+    <linearGradient id="eurasiaForest" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#15803d"/>
+      <stop offset="40%" stop-color="#166534"/>
+      <stop offset="70%" stop-color="#14532d"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+
+    <linearGradient id="africaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#d97706"/> <!-- Sahara Sand -->
+      <stop offset="35%" stop-color="#b45309"/> <!-- Sahel -->
+      <stop offset="65%" stop-color="#166534"/> <!-- Congo Jungle -->
+      <stop offset="100%" stop-color="#15803d"/> <!-- South Africa Savannah -->
+    </linearGradient>
+
+    <linearGradient id="arabiaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+
+    <linearGradient id="iceGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e0f2fe"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 1. Ocean Layer -->
+  <rect width="600" height="150" fill="url(#oceanGrad)"/>
+
+  <!-- 2. Subtle Geographic Coordinate Grid (Parallels & Meridians) -->
+  <g stroke="rgba(255,255,255,0.06)" stroke-width="0.75" stroke-dasharray="2,2">
+    <!-- Equator -->
+    <line x1="0" y1="75" x2="600" y2="75" stroke="rgba(255,255,255,0.12)"/>
+    <!-- Tropics & Polar Circles -->
+    <line x1="0" y1="35" x2="600" y2="35"/>
+    <line x1="0" y1="55" x2="600" y2="55"/>
+    <line x1="0" y1="95" x2="600" y2="95"/>
+    <line x1="0" y1="120" x2="600" y2="120"/>
+    <!-- Meridians -->
+    <line x1="75" y1="0" x2="75" y2="150"/>
+    <line x1="150" y1="0" x2="150" y2="150"/>
+    <line x1="225" y1="0" x2="225" y2="150"/>
+    <line x1="300" y1="0" x2="300" y2="150"/>
+    <line x1="375" y1="0" x2="375" y2="150"/>
+    <line x1="450" y1="0" x2="450" y2="150"/>
+    <line x1="525" y1="0" x2="525" y2="150"/>
+  </g>
+
+  <!-- 3. REAL CONTINENTS OUTLINES -->
+
+  <!-- ===== NORTH AMERICA ===== -->
+  <!-- Alaska & Canada -->
+  <path d="M 25 24 Q 45 15 65 20 Q 85 16 115 22 Q 135 25 145 35 Q 135 48 115 45 Q 110 38 98 42 Q 95 48 105 52 Q 95 58 85 52 Q 75 48 68 35 Q 45 32 30 38 Q 20 32 25 24 Z" fill="#15803d"/>
+  <!-- United States & Great Lakes -->
+  <path d="M 68 45 Q 95 48 128 45 Q 138 52 135 68 Q 125 78 118 78 Q 112 68 105 68 Q 98 75 88 78 Q 78 72 70 65 Q 65 55 68 45 Z" fill="#16a34a"/>
+  <!-- Florida Peninsula -->
+  <path d="M 120 68 Q 125 72 124 80 Q 118 80 118 72 Z" fill="#22c55e"/>
+  <!-- Mexico, Baja California & Central America -->
+  <path d="M 72 68 Q 76 82 72 90 Q 68 85 70 72 Z" fill="#d97706"/> <!-- Baja -->
+  <path d="M 78 74 Q 92 78 98 90 Q 108 95 115 98 Q 112 102 102 96 Q 88 88 78 74 Z" fill="#b45309"/>
+  <!-- Caribbean Islands -->
+  <circle cx="128" cy="84" r="2.5" fill="#22c55e"/>
+  <circle cx="136" cy="87" r="2" fill="#22c55e"/>
+
+  <!-- ===== GREENLAND ===== -->
+  <path d="M 155 12 Q 185 10 180 28 Q 165 35 155 28 Q 150 20 155 12 Z" fill="url(#iceGrad)"/>
+
+  <!-- ===== SOUTH AMERICA ===== -->
+  <!-- Andes Spine & Amazon Basin -->
+  <path d="M 108 98 Q 125 96 138 105 Q 158 112 152 125 Q 142 138 132 142 Q 122 146 118 135 Q 112 118 108 108 Q 105 102 108 98 Z" fill="#15803d"/>
+  <!-- Brazil Highlands & Atacama -->
+  <path d="M 125 105 Q 152 110 148 122 Q 138 130 128 122 Z" fill="#16a34a"/>
+  <!-- Patagonia & Tierra del Fuego -->
+  <path d="M 118 135 Q 124 140 120 148 Q 115 146 116 138 Z" fill="#94a3b8"/>
+
+  <!-- ===== EUROPE ===== -->
+  <!-- Scandinavia (Norway, Sweden, Finland) -->
+  <path d="M 235 18 Q 255 14 260 28 Q 252 38 245 35 Q 242 28 235 25 Z" fill="#15803d"/>
+  <!-- British Isles (UK & Ireland) -->
+  <path d="M 215 32 Q 225 30 226 40 Q 218 45 214 38 Z" fill="#22c55e"/>
+  <circle cx="210" cy="38" r="2.5" fill="#22c55e"/> <!-- Ireland -->
+  <!-- Western Europe (France, Germany, Low Countries) -->
+  <path d="M 226 38 Q 248 35 255 45 Q 248 55 232 54 Q 224 48 226 38 Z" fill="#16a34a"/>
+  <!-- Iberian Peninsula (Spain, Portugal) -->
+  <path d="M 215 54 Q 228 52 226 65 Q 214 66 215 54 Z" fill="#d97706"/>
+  <!-- Italy Boot & Mediterranean Islands -->
+  <path d="M 240 54 Q 248 58 245 68 Q 240 68 238 60 Z" fill="#22c55e"/>
+  <circle cx="234" cy="65" r="2" fill="#22c55e"/> <!-- Sardinia / Corsica -->
+
+  <!-- ===== RUSSIA & EURASIA (HEARTLAND) ===== -->
+  <!-- European Russia, Urals, Siberia to Pacific -->
+  <path d="M 255 22 Q 320 14 410 18 Q 450 25 445 42 Q 410 46 360 42 Q 310 45 270 38 Q 255 32 255 22 Z" fill="url(#eurasiaForest)"/>
+  <!-- Kamchatka Peninsula -->
+  <path d="M 445 32 Q 455 35 452 48 Q 444 48 444 38 Z" fill="#15803d"/>
+  <!-- Caspian & Black Sea depressions (Oceans inside land) -->
+  <ellipse cx="268" cy="52" rx="4" ry="2.5" fill="#0b2c52"/> <!-- Black Sea -->
+  <ellipse cx="282" cy="48" rx="3" ry="5" fill="#0b2c52"/> <!-- Caspian Sea -->
+
+  <!-- ===== AFRICA ===== -->
+  <!-- North Africa & Sahara (Golden Amber) -->
+  <path d="M 218 66 Q 268 64 275 75 Q 265 92 235 90 Q 212 85 218 66 Z" fill="url(#africaGrad)"/>
+  <!-- Sub-Saharan & Central Africa (Green Congolian Basin) -->
+  <path d="M 225 88 Q 265 86 272 105 Q 265 125 248 138 Q 235 125 230 108 Q 220 98 225 88 Z" fill="#15803d"/>
+  <!-- Horn of Africa -->
+  <path d="M 272 88 Q 288 92 284 100 Q 274 98 272 88 Z" fill="#d97706"/>
+  <!-- Madagascar -->
+  <path d="M 288 115 Q 295 118 290 132 Q 285 128 288 115 Z" fill="#16a34a"/>
+
+  <!-- ===== MIDDLE EAST ===== -->
+  <!-- Anatolia & Levant -->
+  <path d="M 268 56 Q 285 55 284 66 Q 272 68 268 56 Z" fill="#b45309"/>
+  <!-- Arabian Peninsula (Saudi Arabia, UAE, Oman) -->
+  <path d="M 278 72 Q 298 70 298 88 Q 288 95 280 88 Q 275 80 278 72 Z" fill="url(#arabiaGrad)"/>
+
+  <!-- ===== ASIA ===== -->
+  <!-- Central Asian Steppes (Kazakhstan, Uzbekistan) -->
+  <path d="M 288 44 Q 330 42 345 54 Q 315 62 290 58 Z" fill="#ca8a04"/>
+  <!-- Indian Subcontinent (Deccan) -->
+  <path d="M 325 66 Q 352 65 348 92 Q 338 98 332 88 Q 324 78 325 66 Z" fill="#16a34a"/>
+  <circle cx="342" cy="98" r="2" fill="#22c55e"/> <!-- Sri Lanka -->
+  <!-- China & East Asia -->
+  <path d="M 345 48 Q 410 46 418 65 Q 405 82 375 78 Q 350 72 345 48 Z" fill="#15803d"/>
+  <!-- Korean Peninsula -->
+  <path d="M 416 54 Q 424 55 422 65 Q 415 64 416 54 Z" fill="#22c55e"/>
+  <!-- Japanese Archipelago -->
+  <path d="M 432 46 Q 442 48 438 64 Q 430 62 432 46 Z" fill="#16a34a"/>
+  <!-- Southeast Asia & Indochina (Vietnam, Thailand, Malaysia) -->
+  <path d="M 372 78 Q 395 76 392 95 Q 380 102 372 90 Z" fill="#15803d"/>
+  <!-- Indonesian Archipelago & Philippines -->
+  <path d="M 378 105 Q 415 104 425 110 Q 395 116 378 105 Z" fill="#16a34a"/>
+  <circle cx="410" cy="85" r="2.5" fill="#22c55e"/> <!-- Philippines -->
+  <circle cx="395" cy="112" r="3" fill="#22c55e"/> <!-- Java -->
+
+  <!-- ===== AUSTRALIA & OCEANIA ===== -->
+  <!-- Australia (Outback Amber + Coastal Green) -->
+  <path d="M 410 105 Q 455 102 460 122 Q 445 138 420 134 Q 405 125 410 105 Z" fill="#d97706"/>
+  <path d="M 415 108 Q 450 106 452 118 Q 440 128 418 122 Z" fill="#15803d"/>
+  <!-- New Zealand -->
+  <path d="M 475 126 Q 484 130 478 142 Q 472 138 475 126 Z" fill="#22c55e"/>
+
+  <!-- ===== POLAR ICE SHELVES ===== -->
+  <!-- Arctic Glacial Cap -->
+  <path d="M 0 0 L 600 0 L 600 8 Q 450 12 300 6 Q 150 10 0 8 Z" fill="#ffffff" opacity="0.95"/>
+  <!-- Antarctica Polar Continent -->
+  <path d="M 0 150 L 600 150 L 600 141 Q 450 135 300 142 Q 150 137 0 141 Z" fill="url(#iceGrad)"/>
+
+  <!-- 4. REALISTIC SWIRLING ATMOSPHERIC CLOUDS -->
+  <g fill="none" stroke="rgba(255,255,255,0.4)" stroke-linecap="round">
+    <!-- Mid-latitude storm tracks -->
+    <path d="M 40 38 Q 75 32 110 44 Q 130 38 160 48" stroke-width="3"/>
+    <path d="M 210 28 Q 250 22 290 35 Q 320 28 350 38" stroke-width="3.5"/>
+    <path d="M 390 32 Q 430 25 470 38 Q 510 32 550 42" stroke-width="3"/>
+    <!-- Tropical ITCZ cloud belts -->
+    <path d="M 20 78 Q 60 84 100 76 Q 140 82 180 75" stroke-width="2"/>
+    <path d="M 230 78 Q 270 82 310 74 Q 350 80 390 76" stroke-width="2.5"/>
+    <path d="M 420 76 Q 460 82 500 74 Q 540 80 580 75" stroke-width="2"/>
+    <!-- Southern ocean storm bands -->
+    <path d="M 50 125 Q 90 132 130 122 Q 170 128 210 120" stroke-width="3"/>
+    <path d="M 260 122 Q 300 130 340 124 Q 380 132 420 122" stroke-width="3.5"/>
+    <path d="M 450 125 Q 490 134 530 122 Q 570 130 600 124" stroke-width="3"/>
+  </g>
+</svg>
