@@ -208,8 +208,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const safeTitle = b.title.replace(/[\\/:*?"<>|\s]+/g, '_').slice(0, 40);
         const fileName = `[Геополитика]_${safeAuthor}_${safeTitle}.${format}`;
 
-        // Priority 1: If on HTTP/localhost server, trigger native server download
-        if (window.location.protocol.startsWith('http')) {
+        // Priority 1: If on Node server with active backend (localhost or live tunnel), use server endpoint
+        const isNodeServer = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.includes('lhr.life');
+        if (isNodeServer) {
             const link = document.createElement('a');
             link.href = `/api/download-book?authorId=${encodeURIComponent(authorId)}&bookIndex=${bookIndex}&format=${format}`;
             link.download = fileName;
