@@ -1743,7 +1743,6 @@ ${b.significance}
         });
 
         loadChatMessages();
-    initAcademicJournal();
     }
 
     document.querySelectorAll(".chat-ch-btn").forEach(btn => {
@@ -2902,7 +2901,7 @@ ${article.content}
         const tabApproved = document.getElementById("modTabApproved");
         const tabRejected = document.getElementById("modTabRejected");
 
-        function updateModView() {
+        window.updateModView = function updateModView() {
             if (isModeratorAuthed) {
                 authGate.classList.add("hidden");
                 dashboard.classList.remove("hidden");
@@ -3079,7 +3078,61 @@ ${article.content}
         } catch (e) {}
     };
 
-    function initAcademicJournal() {
+    
+    // Global Modal Controllers (fail-safe accessible via inline onclick and JS)
+    window.openSubmitArticleModal = function() {
+        if (typeof playSound === "function") playSound("click");
+        const modal = document.getElementById("submitArticleModal");
+        if (modal) modal.classList.remove("hidden");
+    };
+
+    window.closeSubmitArticleModal = function() {
+        const modal = document.getElementById("submitArticleModal");
+        if (modal) modal.classList.add("hidden");
+    };
+
+    window.openModeratorModal = function() {
+        if (typeof playSound === "function") playSound("click");
+        const modal = document.getElementById("moderatorModal");
+        if (modal) {
+            if (typeof window.updateModView === "function") {
+                window.updateModView();
+            }
+            modal.classList.remove("hidden");
+        }
+    };
+
+    window.closeModeratorModal = function() {
+        const modal = document.getElementById("moderatorModal");
+        if (modal) modal.classList.add("hidden");
+    };
+
+    window.closeArticleReaderModal = function() {
+        const modal = document.getElementById("articleReaderModal");
+        if (modal) modal.classList.add("hidden");
+    };
+
+    // Close modals on clicking backdrop
+    ['submitArticleModal', 'moderatorModal', 'articleReaderModal'].forEach(id => {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.classList.add('hidden');
+            });
+        }
+    });
+
+    // Close modals on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            ['submitArticleModal', 'moderatorModal', 'articleReaderModal', 'detailModal', 'quizModal'].forEach(id => {
+                const m = document.getElementById(id);
+                if (m) m.classList.add('hidden');
+            });
+        }
+    });
+
+function initAcademicJournal() {
         loadAcademicArticles();
         setupArticleSubmission();
         setupModeratorPanel();
@@ -3126,6 +3179,7 @@ ${article.content}
     updateHeroQuote();
     updateFavoritesBadge();
     loadChatMessages();
+    initAcademicJournal();
 
     // Poll chat every 6 seconds if on server
     setInterval(() => {
